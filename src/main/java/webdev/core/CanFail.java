@@ -5,13 +5,16 @@ import java.util.*;
 
 public abstract class CanFail
 {
+	/**
+		The list of errors
+	 */
 	private final ArrayList<String> _errors = new ArrayList<String>();
 
 	/** 
-		 Throws an exception for critical errors and stores other non-critical errors
-	 
-	 @param error
-	 @exception InvalidIntegrationException
+		Throws an exception for critical errors and stores other non-critical errors
+		
+		@param error
+		@exception InvalidIntegrationException
 	*/
 	public final void Fail(String error)
 	{
@@ -26,10 +29,9 @@ public abstract class CanFail
 	}
 
 	/** 
-		 Get the errors sent by Paynow
+		Get the errors sent by Paynow
 	 
-	 @param separator
-	 @return 
+		@return 
 	*/
 
 	public final String Errors()
@@ -37,9 +39,22 @@ public abstract class CanFail
 		return Errors(',');
 	}
 
+	/**
+		Get the errors sent by payment
 
+		@param separator
+		
+		@return The errors from paynow
+	 */
 	public final String Errors(char separator)
 	{
-		return _errors.Aggregate("", (accumulator, value) -> accumulator += String.format("%1$s%2$s ", value, separator)).trim();
+		StringBuilder sb = new StringBuilder();
+		for (String s : _errors)
+		{
+			sb.append(s);
+			sb.append(separator);
+		}
+
+		return sb.toString();
 	}
 }

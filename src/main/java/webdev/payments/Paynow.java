@@ -15,8 +15,7 @@ public class Paynow
 	 
 	 @param integrationId
 	 @param integrationKey
-	 @param resultUrl
-	 @exception ArgumentException
+	 @exception IllegalArgumentException
 	*/
 
 	public Paynow(String integrationId, String integrationKey)
@@ -26,18 +25,18 @@ public class Paynow
 
 	public Paynow(String integrationId, String integrationKey, String resultUrl)
 	{
-		if (tangible.StringHelper.isNullOrEmpty(integrationId))
+		if (integrationId.isEmpty())
 		{
-			throw new IllegalArgumentException("Integration id cannot be empty", "integrationId");
+			throw new IllegalArgumentException("Integration id cannot be empty");
 		}
-		if (tangible.StringHelper.isNullOrEmpty(integrationKey))
+		if (integrationKey.isEmpty())
 		{
-			throw new IllegalArgumentException("Integration key cannot be empty", "integrationKey");
+			throw new IllegalArgumentException("Integration key cannot be empty");
 		}
 
 
 		setIntegrationId(integrationId);
-		setIntegrationKey(UUID.fromString(integrationKey));
+		setIntegrationKey(integrationKey);
 
 		if (resultUrl != null)
 		{
@@ -77,12 +76,12 @@ public class Paynow
 	/** 
 		 Merchant's integration id
 	*/
-	private UUID IntegrationKey;
-	public final UUID getIntegrationKey()
+	private String IntegrationKey;
+	public final String getIntegrationKey()
 	{
 		return IntegrationKey;
 	}
-	public final void setIntegrationKey(UUID value)
+	public final void setIntegrationKey(String value)
 	{
 		IntegrationKey = value;
 	}
@@ -118,7 +117,6 @@ public class Paynow
 	 
 	 @param reference
 	 @param values
-	 @param authEmail
 	 @return 
 	*/
 
@@ -147,12 +145,12 @@ public class Paynow
 	*/
 	public final InitResponse Send(Payment payment)
 	{
-		if (tangible.StringHelper.isNullOrEmpty(payment.getReference()))
+		if (payment.getReference().isEmpty())
 		{
 			throw new InvalidReferenceException();
 		}
 
-		if (payment.getTotal().compareTo(0) <= 0)
+		if (payment.getTotal().compareTo(BigDecimal.ZERO) <= 0)
 		{
 			throw new EmptyCartException();
 		}
@@ -163,7 +161,7 @@ public class Paynow
 	public final StatusResponse PollTransaction(String url)
 	{
 		String response = getClient().PostAsync(url, null);
-		HashMap<Object, Object> data = HttpUtility.ParseQueryString(response).ToDictionary();
+		HashMap<String, String> data = Extensions.ParseQueryString(response);
 
 		if (!data.containsKey("hash") || Hash.Verify(data, getIntegrationKey()))
 		{
@@ -182,7 +180,7 @@ public class Paynow
 	*/
 	public final StatusResponse ProcessStatusUpdate(String response)
 	{
-		HashMap<Object, Object> data = HttpUtility.ParseQueryString(response).ToDictionary();
+		HashMap<String, String> data = Extensions.ParseQueryString(response);
 
 		if (!data.containsKey("hash") || Hash.Verify(data, getIntegrationKey()))
 		{
@@ -210,38 +208,21 @@ public class Paynow
 		return new StatusResponse(response);
 	}
 
-	/** 
-		 Send a mobile transaction to paynow
-	 
-	 @param payment
-	 @param phone
-	 @param method
-	 @return 
-	 @exception InvalidReferenceException
-	 @exception EmptyCartException
-	 @exception ArgumentException
-	*/
-
-	public final InitResponse SendMobile(Payment payment, String phone)
+	public final InitResponse SendMobile(Payment payment, String phone, String method)
 	{
-		return SendMobile(payment, phone, MobileMoneyMethod.Ecocash);
-	}
-	
-	public final InitResponse SendMobile(Payment payment, String phone, MobileMoneyMethod method)
-	{
-		if (tangible.StringHelper.isNullOrEmpty(payment.getReference()))
+		if (payment.getReference().isEmpty())
 		{
 			throw new InvalidReferenceException();
 		}
 
-		if (payment.getTotal().compareTo(0) <= 0)
+		if (payment.getTotal().compareTo(BigDecimal.ZERO) <= 0)
 		{
 			throw new EmptyCartException();
 		}
 
-		if (!Regex.IsMatch(phone, "07([7,8])((\\1=7)[1-9]|[2-5])\\d{6}"))
+		if (!phone.matches("07([7,8])((\\1=7)[1-9]|[2-5])\\d{6}"))
 		{
-			throw new IllegalArgumentException("Invalid phone number", "phone");
+			throw new IllegalArgumentException("Invalid phone number");
 		}
 
 		return InitMobile(payment, phone, method);
@@ -255,7 +236,7 @@ public class Paynow
 	 @param method
 	 @return 
 	*/
-	private InitResponse InitMobile(Payment payment, String phone, MobileMoneyMethod method)
+	private InitResponse InitMobile(Payment payment, String phone, String method)
 	{
 		HashMap<String, String> data = FormatMobileInitRequest(payment, phone, method);
 
@@ -266,7 +247,7 @@ public class Paynow
 			throw new HashMismatchException();
 		}
 
-		return new InitResponse(HttpUtility.ParseQueryString(response).ToDictionary());
+		return new InitResponse(Extensions.ParseQueryString(response));
 	}
 
 
@@ -274,8 +255,7 @@ public class Paynow
 		 Initiate a new Paynow transaction
 	 
 	 @param payment
-	 @return 
-	 @exception NotImplementedException
+	 @return
 	*/
 	private InitResponse Init(Payment payment)
 	{
@@ -288,7 +268,7 @@ public class Paynow
 			throw new HashMismatchException();
 		}
 
-		return new InitResponse(HttpUtility.ParseQueryString(response).ToDictionary());
+		return new InitResponse(Extensions.ParseQueryString(response));
 	}
 
 	/** 
@@ -299,7 +279,7 @@ public class Paynow
 	*/
 	private HashMap<String, String> FormatInitRequest(Payment payment)
 	{
-		HashMap<Object, Object> items = payment.ToDictionary();
+		HashMap<String, String> items = payment.ToDictionary();
 
 		items.put("returnurl", getReturnUrl().trim());
 		items.put("resulturl", getResultUrl().trim());
@@ -321,15 +301,15 @@ public class Paynow
 	 @param method The mobile transaction method i.e ecocash, telecash
 	 @return 
 	*/
-	private HashMap<String, String> FormatMobileInitRequest(Payment payment, String phone, MobileMoneyMethod method)
+	private HashMap<String, String> FormatMobileInitRequest(Payment payment, String phone, String method)
 	{
-		HashMap<Object, Object> items = payment.ToDictionary();
+		HashMap<String, String> items = payment.ToDictionary();
 
 		items.put("returnurl", getReturnUrl().trim());
 		items.put("resulturl", getResultUrl().trim());
 		items.put("id", getIntegrationId());
 		items.put("phone", phone);
-		items.put("method", Webdev.Helpers.Extensions.GetString(method));
+		items.put("method", method);
 
 		items.put("hash", Hash.Make(items, getIntegrationKey()));
 

@@ -9,7 +9,7 @@ public class Client
 	public Client()
 	{
 		// TODO: Implement
-		_client = new HttpClient();
+		// _client = new HttpClient();
 	}
 
 	/** 
@@ -28,10 +28,12 @@ public class Client
 
 	public final String PostAsync(String url, HashMap<String, String> data)
 	{
-		HashMap<String, String> content = new FormUrlEncodedContent((data != null) ? data : new HashMap<String, String>());
+		// HashMap<String, String> content = new FormUrlEncodedContent((data != null) ? data : new HashMap<String, String>());
 
-		TResult response = _client.PostAsync(url, content).Result;
+		// TResult response = _client.PostAsync(url, content).Result;
 
-		return response.Content.ReadAsStringAsync().Result;
+		// return response.Content.ReadAsStringAsync().Result;
+		// 
+		return "";
 	}
 }

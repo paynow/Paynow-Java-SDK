@@ -4,7 +4,10 @@ import webdev.exceptions.*;
 import java.util.*;
 
 
-
+/**
+	This class is a wrapper around the response sent from Paynow
+	when initiating a transaction
+ */
 public class InitResponse extends CanFail
 {
 	/** 
@@ -73,9 +76,8 @@ public class InitResponse extends CanFail
 	}
 
 	/** 
-		 Returns the poll URL sent from Paynow
-	 
-	 @return 
+		Returns the poll URL sent from Paynow
+		@return 
 	*/
 	public final String PollUrl()
 	{
@@ -86,7 +88,7 @@ public class InitResponse extends CanFail
 	/** 
 		 Gets a boolean indicating whether a request succeeded or failed
 	 
-	 @return 
+	 	@return 
 	*/
 	public final boolean Success()
 	{
