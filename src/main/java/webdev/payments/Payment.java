@@ -1,6 +1,6 @@
 package webdev.payments;
 
-import webdev.helpers.Extensions;
+import webdev.helpers.Utils;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -9,6 +9,19 @@ import java.util.HashMap;
  * Represents a single transaction to be sent to Paynow
  */
 public class Payment {
+    /**
+     * Email to be sent to Paynow with the transaction
+     */
+    public String AuthEmail = "";
+    /**
+     * This is the reference for the transaction (like an id in the database)
+     */
+    private String Reference;
+    /**
+     * List of the items in the transaction
+     */
+    private HashMap<String, BigDecimal> Items;
+
     public Payment(String reference, String authEmail) {
         setReference(reference);
         Items = new HashMap<String, BigDecimal>();
@@ -21,11 +34,6 @@ public class Payment {
         AuthEmail = authEmail;
     }
 
-    /**
-     * This is the reference for the transaction (like an id in the database)
-     */
-    private String Reference;
-
     public final String getReference() {
         return Reference;
     }
@@ -33,11 +41,6 @@ public class Payment {
     public final void setReference(String value) {
         Reference = value;
     }
-
-    /**
-     * List of the items in the transaction
-     */
-    private HashMap<String, BigDecimal> Items;
 
     private HashMap<String, BigDecimal> getItems() {
         return Items;
@@ -49,12 +52,6 @@ public class Payment {
     public final BigDecimal getTotal() {
         return GetTotal();
     }
-
-    /**
-     * Email to be sent to Paynow with the transaction
-     */
-    public String AuthEmail = "";
-
 
     /**
      * Add a new item to the transaction
@@ -87,14 +84,14 @@ public class Payment {
      * Get the string representation of the items in the transaction
      */
     public final String ItemsDescription() {
-        return Extensions.FlattenCollection(getItems()).trim();
+        return Utils.FlattenCollection(getItems()).trim();
     }
 
     /**
      * Get the total cost of the items in the transaction
      */
     private BigDecimal GetTotal() {
-        return Extensions.AddCollectionValues(getItems());
+        return Utils.AddCollectionValues(getItems());
     }
 
     /**
@@ -103,7 +100,7 @@ public class Payment {
      * @return
      */
     public final HashMap<String, String> ToDictionary() {
-        HashMap<String, String> map =  new HashMap<String, String>(
+        HashMap<String, String> map = new HashMap<String, String>(
 //        Map.ofEntries(
 //                Map.entry("resulturl", ""),
 //                Map.entry("returnurl", ""),

@@ -1,39 +1,66 @@
 package webdev.http;
 
-import java.util.*;
+import webdev.helpers.Utils;
 
-public class Client
-{
-	private HttpClient _client;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Scanner;
 
-	public Client()
-	{
-		// TODO: Implement
-		// _client = new HttpClient();
-	}
+/**
+ * This class handles sending HTTP requests in the application
+ */
+public class Client {
 
-	/** 
-		 /
-	 
-	 @param url
-	 @param data
-	 @return 
-	*/
+    /**
+     * Send an empty post request to the given URL
+     *
+     * @param url The url to send post request to
+     * @return The response body from the request
+     */
 
-	public final String PostAsync(String url)
-	{
-		return PostAsync(url, null);
-	}
+    public final String PostAsync(String url) throws IOException {
+        return PostAsync(url, null);
+    }
 
+    /**
+     * Send a post request to the given url with the given data
+     *
+     * @param url  The url to send post request to
+     * @param data The data to send in the post request body
+     *
+     * @return The response body from the request
+     */
+    public final String PostAsync(String url, HashMap<String, String> data) throws IOException {
+        // Define the server endpoint to send the HTTP request to
+        URL serverUrl = new URL("https://www.techcoil.com/process/proof-of-concepts/userNameAndLuckyNumberTextFileGeneration");
 
-	public final String PostAsync(String url, HashMap<String, String> data)
-	{
-		// HashMap<String, String> content = new FormUrlEncodedContent((data != null) ? data : new HashMap<String, String>());
+        HttpURLConnection urlConnection = (HttpURLConnection) serverUrl.openConnection();
 
-		// TResult response = _client.PostAsync(url, content).Result;
+        // Indicate that we want to write to the HTTP request body
+        urlConnection.setDoOutput(true);
+        urlConnection.setRequestMethod("POST");
 
-		// return response.Content.ReadAsStringAsync().Result;
-		// 
-		return "";
-	}
+        // Writing the post data to the HTTP request body
+        if (data != null) {
+            BufferedWriter httpRequestBodyWriter =
+                    new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
+            httpRequestBodyWriter.write(Utils.urlEncode(data));
+            httpRequestBodyWriter.close();
+        }
+
+        // Reading from the HTTP response body
+        StringBuilder sb = new StringBuilder();
+        Scanner httpResponseScanner = new Scanner(urlConnection.getInputStream());
+        while (httpResponseScanner.hasNextLine()) {
+            sb.append(httpResponseScanner.nextLine());
+        }
+
+        httpResponseScanner.close();
+
+        return sb.toString();
+    }
 }
