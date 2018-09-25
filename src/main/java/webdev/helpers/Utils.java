@@ -4,12 +4,24 @@ import java.io.UnsupportedEncodingException;
 import webdev.payments.MobileMoneyMethod;
 import webdev.core.Constants;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-
+import java.util.regex.Pattern;
 
 public final class Utils {
+    public static BigDecimal b(double value)
+    {
+        return new BigDecimal(value);
+    }
+
+    public static BigDecimal b(int value)
+    {
+        return new BigDecimal(value);
+    }
+
     /**
      * Url encode the given string
      *
@@ -44,7 +56,8 @@ public final class Utils {
         return sb.toString();
     }
 
-    public static String FlattenCollection(HashMap<String, BigDecimal> items) {
+
+    public static String flattenCollection(HashMap<String, BigDecimal> items) {
         StringBuilder sb = new StringBuilder();
 
         for (Map.Entry<String, BigDecimal> pair : items.entrySet()) {
@@ -61,7 +74,7 @@ public final class Utils {
      * @param items The collection of values
      * @return The total of the items
      */
-    public static BigDecimal AddCollectionValues(HashMap<String, BigDecimal> items) {
+    public static BigDecimal addCollectionValues(HashMap<String, BigDecimal> items) {
         BigDecimal number = BigDecimal.ZERO;
 
         for (Map.Entry<String, BigDecimal> pair : items.entrySet()) {
@@ -71,13 +84,35 @@ public final class Utils {
         return number;
     }
 
-    public static HashMap<String, String> ParseQueryString(String qs) {
-        // TODO: Implement
-
-        return new HashMap<String, String>();
+    public static String urlDecode(String s)
+    {
+        try {
+            return URLDecoder.decode(s, "UTF-8");
+        } catch (Exception e) {
+            return s;
+        }
     }
 
-    public static String GetString(MobileMoneyMethod method) {
+    public static boolean validateEmail(String email)
+    {
+        return Pattern.compile(
+                "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+        )
+                .matcher(email).matches();
+    }
+
+
+    public static LinkedHashMap<String, String> parseQueryString(String qs) {
+        LinkedHashMap<String, String> query_pairs = new LinkedHashMap<String, String>();
+        String[] pairs = qs.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            query_pairs.put(urlDecode(pair.substring(0, idx)), urlDecode(pair.substring(idx + 1)));
+        }
+        return query_pairs;
+    }
+
+    public static String getString(MobileMoneyMethod method) {
         switch (method) {
             case Ecocash:
                 return Constants.MobileMoneyMethodEcocash;

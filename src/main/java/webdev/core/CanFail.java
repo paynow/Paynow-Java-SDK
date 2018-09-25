@@ -17,7 +17,7 @@ public abstract class CanFail {
      * @param error The message for the exception
      * @throws InvalidIntegrationException Thrown if Paynow reports that user used an invalid integration
      */
-    public void Fail(String error) {
+    public void fail(String error) {
         switch (error) {
             case Constants.ResponseInvalidId:
                 throw new InvalidIntegrationException();
@@ -33,8 +33,8 @@ public abstract class CanFail {
      *
      * @return The errors sent by paynow
      */
-    public final String Errors() {
-        return Errors(',');
+    public final String errors() {
+        return errors(',');
     }
 
     /**
@@ -43,7 +43,7 @@ public abstract class CanFail {
      * @param separator The character to separate the errors with
      * @return The errors from paynow
      */
-    private String Errors(char separator) {
+    private String errors(char separator) {
         StringBuilder sb = new StringBuilder();
         for (String s : _errors) {
             sb.append(s);

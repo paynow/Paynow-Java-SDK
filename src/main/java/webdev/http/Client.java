@@ -36,7 +36,7 @@ public class Client {
      */
     public final String PostAsync(String url, HashMap<String, String> data) throws IOException {
         // Define the server endpoint to send the HTTP request to
-        URL serverUrl = new URL("https://www.techcoil.com/process/proof-of-concepts/userNameAndLuckyNumberTextFileGeneration");
+        URL serverUrl = new URL(url);
 
         HttpURLConnection urlConnection = (HttpURLConnection) serverUrl.openConnection();
 
@@ -45,12 +45,10 @@ public class Client {
         urlConnection.setRequestMethod("POST");
 
         // Writing the post data to the HTTP request body
-        if (data != null) {
-            BufferedWriter httpRequestBodyWriter =
-                    new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
-            httpRequestBodyWriter.write(Utils.urlEncode(data));
-            httpRequestBodyWriter.close();
-        }
+        BufferedWriter httpRequestBodyWriter =
+                new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
+        httpRequestBodyWriter.write(data == null ? "" : Utils.urlEncode(data));
+        httpRequestBodyWriter.close();
 
         // Reading from the HTTP response body
         StringBuilder sb = new StringBuilder();

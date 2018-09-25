@@ -21,10 +21,10 @@ public class StatusResponse extends CanFail implements IResponse {
     public StatusResponse(Map<String, String> response) {
         Data = response;
 
-        Load();
+        load();
     }
 
-    protected final Map<String, String> getData() {
+    public final Map<String, String> getData() {
         return Data;
     }
 
@@ -66,14 +66,14 @@ public class StatusResponse extends CanFail implements IResponse {
      *
      * @return
      */
-    public final boolean Success() {
+    public final boolean success() {
         return getWasSuccessful();
     }
 
     /**
      * Reads through the response data sent from Paynow
      */
-    private void Load() {
+    private void load() {
         if (!getData().containsKey("error")) {
             setWasSuccessful(true);
         }
@@ -95,7 +95,7 @@ public class StatusResponse extends CanFail implements IResponse {
         }
 
         if (getData().containsKey("error")) {
-            Fail(getData().get("error"));
+            fail(getData().get("error"));
         }
     }
 
@@ -104,21 +104,12 @@ public class StatusResponse extends CanFail implements IResponse {
      *
      * @return
      */
-    public final String PollUrl() {
+    public final String pollUrl() {
         return getData().containsKey("pollurl") ? getData().get("pollurl") : "";
     }
 
-    public final boolean Paid() {
+    public final boolean paid() {
         return getWasPaid();
     }
 
-
-    /**
-     * Get the original data sent from Paynow
-     *
-     * @return
-     */
-    public final Map<String, String> GetData() {
-        return getData();
-    }
 }

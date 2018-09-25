@@ -1,6 +1,7 @@
 package webdev.helpers;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Map;
 
@@ -17,9 +18,9 @@ public final class Hash {
      * @return The hash of the files
      */
     public static String make(Map<String, String> values, String integrationKey) {
-        return generateHash(
-                Concat(values).concat(integrationKey)
-        );
+        String str = concat(values).concat(integrationKey);
+
+        return generateHash(str);
     }
 
     /**
@@ -28,15 +29,14 @@ public final class Hash {
      * @param input The string to hash
      * @return The SHA512 hash of the input string
      */
-    private static String generateHash(String input) {
-
+    public static String generateHash(String input) {
         String hash = null;
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-512");
 
             digest.reset();
-            digest.update(input.getBytes("utf8"));
+            digest.update(input.getBytes(StandardCharsets.UTF_8));
 
             hash = String.format("%040x", new BigInteger(1, digest.digest()));
 
@@ -44,8 +44,9 @@ public final class Hash {
             e.printStackTrace();
         }
 
-        return hash;
+        return hash.toUpperCase();
     }
+
 
 
     /**
@@ -54,7 +55,7 @@ public final class Hash {
      * @param items The values to concatenate
      * @return The concatenated string values
      */
-    private static String Concat(Map<String, String> items) {
+    private static String concat(Map<String, String> items) {
         StringBuilder sb = new StringBuilder();
 
         for (Map.Entry<String, String> pair : items.entrySet()) {
@@ -73,7 +74,7 @@ public final class Hash {
      * @param integrationKey Integration key to use during hashing
      * @return Boolean value indicating whether hashes match or not. True for match, false for mismatch
      */
-    public static boolean Verify(Map<String, String> data, String integrationKey) {
+    public static boolean verify(Map<String, String> data, String integrationKey) {
         return make(data, integrationKey).equals(data.get("hash"));
     }
 }

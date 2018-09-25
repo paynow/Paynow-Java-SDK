@@ -13,7 +13,7 @@ public class InitResponse extends CanFail {
     private Map<String, String> Data;
     private boolean WasSuccessful;
     private boolean HasRedirect;
-
+    private String instructions;
     /**
      * InitResponse constructor.
      *
@@ -23,10 +23,10 @@ public class InitResponse extends CanFail {
     public InitResponse(Map<String, String> response) {
         Data = response;
 
-        Load();
+        load();
     }
 
-    protected final Map<String, String> getData() {
+    public final Map<String, String> getData() {
         return Data;
     }
 
@@ -49,7 +49,7 @@ public class InitResponse extends CanFail {
     /**
      * Reads through the response data sent from Paynow
      */
-    private void Load() {
+    private void load() {
         if (getData().containsKey("status")) {
             setWasSuccessful(getData().get("status").toLowerCase().equals(Constants.ResponseOk));
         }
@@ -58,21 +58,27 @@ public class InitResponse extends CanFail {
             setHasRedirect(true);
         }
 
+        if (getData().containsKey("instructions")) {
+            setInstructions(getData().get("instructions"));
+        }
+
         if (getWasSuccessful()) {
             return;
         }
 
         if (getData().containsKey("error")) {
-            Fail(getData().get("error"));
+            fail(getData().get("error"));
         }
+
+
     }
 
     /**
-     * Returns the poll URL sent from Paynow
+     * Returns the poll URL sent from PaynowgetInstructions
      *
      * @return
      */
-    public final String PollUrl() {
+    public final String pollUrl() {
         return getData().containsKey("pollurl") ? getData().get("pollurl") : "";
     }
 
@@ -82,7 +88,7 @@ public class InitResponse extends CanFail {
      *
      * @return
      */
-    public final boolean Success() {
+    public final boolean success() {
         return getWasSuccessful();
     }
 
@@ -91,16 +97,19 @@ public class InitResponse extends CanFail {
      *
      * @return
      */
-    public final String RedirectLink() {
+    public final String redirectLink() {
         return getHasRedirect() ? getData().get("browserurl") : "";
     }
 
-    /**
-     * Get the original data sent from Paynow
-     *
-     * @return
-     */
-    public final Map<String, String> GetData() {
-        return getData();
+    public final String instructions() {
+        return getWasSuccessful() ? getInstructions() : "";
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
     }
 }

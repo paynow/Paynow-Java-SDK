@@ -118,15 +118,19 @@ public class Paynow {
      * @return
      */
 
-    public final Payment CreatePayment(String reference, java.util.HashMap<String, java.math.BigDecimal> values) {
-        return CreatePayment(reference, values, "");
+    public final Payment createPayment(String reference, java.util.HashMap<String, java.math.BigDecimal> values) {
+        return createPayment(reference, values, "");
     }
 
-    public final Payment CreatePayment(String reference) {
-        return CreatePayment(reference, null, "");
+    public final Payment createPayment(String reference, String email) {
+        return createPayment(reference, null, email);
     }
 
-    public final Payment CreatePayment(String reference, HashMap<String, BigDecimal> values, String authEmail) {
+    public final Payment createPayment(String reference) {
+        return createPayment(reference, null, "");
+    }
+
+    public final Payment createPayment(String reference, HashMap<String, BigDecimal> values, String authEmail) {
         return values != null ? new Payment(reference, values, authEmail) : new Payment(reference, authEmail);
     }
 
@@ -138,7 +142,7 @@ public class Paynow {
      * @throws InvalidReferenceException
      * @throws EmptyCartException
      */
-    public final InitResponse Send(Payment payment) {
+    public final InitResponse send(Payment payment) {
         if (payment.getReference().isEmpty()) {
             throw new InvalidReferenceException();
         }
@@ -147,7 +151,7 @@ public class Paynow {
             throw new EmptyCartException();
         }
 
-        return Init(payment);
+        return init(payment);
     }
 
     /**
@@ -160,13 +164,14 @@ public class Paynow {
      *
      * @return The response from Paynow
      */
-    public final StatusResponse PollTransaction(String url) throws HashMismatchException, ConnectionException {
+    public final StatusResponse pollTransaction(String url) throws HashMismatchException, ConnectionException {
        try  {
            String response = getClient().PostAsync(url, null);
-           HashMap<String, String> data = Utils.ParseQueryString(response);
 
-           if (!data.containsKey("hash") || Hash.Verify(data, getIntegrationKey())) {
-               throw new HashMismatchException();
+           HashMap<String, String> data = Utils.parseQueryString(response);
+
+           if (!data.containsKey("hash") || !Hash.verify(data, getIntegrationKey())) {
+               throw new HashMismatchException(data.get("Error"));
            }
 
            return new StatusResponse(data);
@@ -182,11 +187,11 @@ public class Paynow {
      * @return
      * @throws HashMismatchException
      */
-    public final StatusResponse ProcessStatusUpdate(String response) {
-        HashMap<String, String> data = Utils.ParseQueryString(response);
+    public final StatusResponse processStatusUpdate(String response) {
+        HashMap<String, String> data = Utils.parseQueryString(response);
 
-        if (!data.containsKey("hash") || Hash.Verify(data, getIntegrationKey())) {
-            throw new HashMismatchException();
+        if (!data.containsKey("hash") || !Hash.verify(data, getIntegrationKey())) {
+            throw new HashMismatchException(data.get("Error"));
         }
 
         return new StatusResponse(data);
@@ -202,15 +207,15 @@ public class Paynow {
      *
      * @return The status response from Paynow
      */
-    public final StatusResponse ProcessStatusUpdate(HashMap<String, String> response) {
-        if (!response.containsKey("hash") || Hash.Verify(response, getIntegrationKey())) {
-            throw new HashMismatchException();
+    public final StatusResponse processStatusUpdate(HashMap<String, String> response) {
+        if (!response.containsKey("hash") || !Hash.verify(response, getIntegrationKey())) {
+            throw new HashMismatchException(response.get("Error"));
         }
 
         return new StatusResponse(response);
     }
 
-    public final InitResponse SendMobile(Payment payment, String phone, String method) {
+    public final InitResponse sendMobile(Payment payment, String phone, String method) {
         if (payment.getReference().isEmpty()) {
             throw new InvalidReferenceException();
         }
@@ -223,7 +228,7 @@ public class Paynow {
             throw new IllegalArgumentException("Invalid phone number");
         }
 
-        return InitMobile(payment, phone, method);
+        return initMobile(payment, phone, method);
     }
 
     /**
@@ -235,17 +240,25 @@ public class Paynow {
      *
      * @return The response from Paynow
      */
-    private InitResponse InitMobile(Payment payment, String phone, String method) throws ConnectionException, HashMismatchException {
+    private InitResponse initMobile(Payment payment, String phone, String method) throws ConnectionException, HashMismatchException {
         try {
-            HashMap<String, String> data = FormatMobileInitRequest(payment, phone, method);
+            HashMap<String, String> data = formatMobileInitRequest(payment, phone, method);
 
-            String response = getClient().PostAsync(Constants.UrlInitiateTransaction, data);
+            String email = data.get("authemail");
 
-            if (!data.containsKey("hash") || Hash.Verify(data, getIntegrationKey())) {
-                throw new HashMismatchException();
+            if(email == null || email.isEmpty() || !Utils.validateEmail(email)) {
+                throw new IllegalArgumentException("Auth email is required for mobile transactions. Please pass a valid email address to the createPayment method");
             }
 
-            return new InitResponse(Utils.ParseQueryString(response));
+            HashMap<String, String> response = Utils.parseQueryString(
+                    getClient().PostAsync(Constants.UrlInitiateMobileTransaction, data)
+            );
+
+            if (!response.get("status").toLowerCase().equals("error") && (!response.containsKey("hash") || !Hash.verify(response, getIntegrationKey()))) {
+                throw new HashMismatchException(response.get("Error"));
+            }
+
+            return new InitResponse(response);
         } catch (IOException ex) {
             throw new ConnectionException(ex.getMessage());
         }
@@ -258,17 +271,20 @@ public class Paynow {
      * @param payment The payment to send to Paynow
      * @return The response from Paynow
      */
-    private InitResponse Init(Payment payment) throws ConnectionException, HashMismatchException {
+    private InitResponse init(Payment payment) throws ConnectionException, HashMismatchException {
         try {
-            HashMap<String, String> data = FormatInitRequest(payment);
+            HashMap<String, String> data = formatInitRequest(payment);
 
-            String response = getClient().PostAsync(Constants.UrlInitiateTransaction, data);
+            HashMap<String, String> response = Utils.parseQueryString(
+                    getClient().PostAsync(Constants.UrlInitiateTransaction, data)
+            );
 
-            if (!data.containsKey("hash") || !Hash.Verify(data, getIntegrationKey())) {
-                throw new HashMismatchException();
+            if (!response.get("status").toLowerCase().equals("error") || !response.containsKey("hash") || !Hash.verify(response, getIntegrationKey())) {
+                throw new HashMismatchException(response.get("Error"));
             }
 
-            return new InitResponse(Utils.ParseQueryString(response));
+
+            return new InitResponse(response);
         } catch (IOException ex) {
             throw new ConnectionException(ex.getMessage());
         }
@@ -280,8 +296,8 @@ public class Paynow {
      * @param payment
      * @return
      */
-    private HashMap<String, String> FormatInitRequest(Payment payment) {
-        HashMap<String, String> items = payment.ToDictionary();
+    private HashMap<String, String> formatInitRequest(Payment payment) {
+        HashMap<String, String> items = payment.toDictionary();
 
         items.put("returnurl", getReturnUrl().trim());
         items.put("resulturl", getResultUrl().trim());
@@ -303,8 +319,8 @@ public class Paynow {
      * @param method  The mobile transaction method i.e ecocash, telecash
      * @return
      */
-    private HashMap<String, String> FormatMobileInitRequest(Payment payment, String phone, String method) {
-        HashMap<String, String> items = payment.ToDictionary();
+    private HashMap<String, String> formatMobileInitRequest(Payment payment, String phone, String method) {
+        HashMap<String, String> items = payment.toDictionary();
 
         items.put("returnurl", getReturnUrl().trim());
         items.put("resulturl", getResultUrl().trim());
