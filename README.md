@@ -8,26 +8,9 @@ This library has a set of prerequisites that must be met for it to work
 
 ## Installation
 
-There are multiple ways to download PayPal Java SDK dependency, based on your dependency manager. Here are the most popular ones:
+> Package will soon be published to Central and will be available to install using package managers and build tools like Gradle
 
-### Installing using [Gradle](https://gradle.org/install/)
-```gradle
-repositories {
-	mavenCentral()
-}
-dependencies {
-	compile 'zw.paynow:java-sdk:+'
-}
-```
-
-### Installing using [Maven](https://maven.apache.org/)
-```xml
-<dependency>
-	<groupId>zw.paynow</groupId>
-	<artifactId>java-sdk</artifactId>
-	<version>LATEST</version>
-</dependency>
-```
+Download the latest JAR on the releases page and import it into your project
 
 
 ## Usage example
