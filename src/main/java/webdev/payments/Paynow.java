@@ -279,7 +279,7 @@ public class Paynow {
                     getClient().PostAsync(Constants.UrlInitiateTransaction, data)
             );
 
-            if (!response.get("status").toLowerCase().equals("error") || !response.containsKey("hash") || !Hash.verify(response, getIntegrationKey())) {
+            if (response.get("status").toLowerCase().equals("error") || !response.containsKey("hash") || !Hash.verify(response, getIntegrationKey())) {
                 throw new HashMismatchException(response.get("Error"));
             }
 
