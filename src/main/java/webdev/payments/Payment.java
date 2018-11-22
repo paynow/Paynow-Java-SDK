@@ -1,7 +1,6 @@
 package webdev.payments;
 
 import webdev.helpers.Utils;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -143,29 +142,16 @@ public class Payment {
      * @return
      */
     public final HashMap<String, String> toDictionary() {
-        HashMap<String, String> map = new HashMap<String, String>(
-//        Map.ofEntries(
-//                Map.entry("resulturl", ""),
-//                Map.entry("returnurl", ""),
-//                Map.entry("reference", getReference()),
-//                Map.entry("amount", getTotal().toString()),
-//                Map.entry("id", ""),
-//                Map.entry("additionalinfo", ItemsDescription()),
-//                Map.entry("authemail", AuthEmail),
-//                Map.entry("status", "Message")
-//        )
-        );
+        HashMap<String, String> map = new HashMap<String, String>();
 
         map.put("resulturl", "");
         map.put("returnurl", "");
         map.put("reference", getReference());
-        map.put("amount", getTotal().setScale(2, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toString());
+        map.put("amount", getTotal().toString());
         map.put("id", "");
         map.put("additionalinfo", itemsDescription());
         map.put("authemail", AuthEmail);
         map.put("status", "Message");
-
-        //TODO: Fix things
 
         return map;
     }
