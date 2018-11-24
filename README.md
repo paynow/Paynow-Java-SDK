@@ -2,20 +2,21 @@
 
 ## Prerequisites
 
-This library has a set of prerequisites that must be met for it to work
+This library has the following set of prerequisites that must be met for it to work.
 
 1.  Java JDK 6 or higher
 
 ## Installation
 
-> Package will soon be published to Central and will be available to install using package managers and build tools like Gradle
+> Note: Project will soon be published to Maven Central Repository and will be available to install using package managers and build tools like Gradle or Maven
 
-Download the latest JAR on the releases page and import it into your project
+To use the Java Paynow SDK, you need to add this project as a dependency. This can be achieved by using a multi module project structure, or by compiling this project into a jar and importing it as a dependency.
 
+## Usage
 
-## Usage example
-
+To get started using the SDK, do the following.
 ### Importing library
+Import the required classes as follows.
 
 ```java
 import webdev.core.*;
@@ -23,23 +24,30 @@ import webdev.payments.Paynow;
 import webdev.payments.Payment;
 ```
 
-Create an instance of the Paynow class optionally setting the result and return url(s)
+As shown below, create an instance of `Paynow` associated with the integration ID and integration key as supplied by Paynow. The Paynow object you create can be used for multiple transactions.
 
 ```java
 Paynow paynow = new Paynow("INTEGRATION_ID", "INTEGRATION_KEY");
-
-paynow.setResultUrl("http://example.com/gateways/paynow/update");
-paynow.setReturnUrl("http://example.com/return?gateway=paynow");
-// The return url can be set at later stages. You might want to do this if you want to pass data to the return url (like the reference of the transaction)
 ```
 
-Create a new payment passing in the reference for that payment (e.g invoice id, or anything that you can use to identify the transaction.
+## Web transaction usage example
+
+The usage example shown in this section is a demonstration of how to initiate and complete a web based transaction.
+
+After creating the Paynow object, optionally set the result and return URLs. The return URL can be set at later stages, for example, you might want to do this if you want to pass data to the return url ( the reference of the transaction as shown below).
+
+```java
+paynow.setResultUrl("http://example.com/gateways/paynow/update");
+paynow.setReturnUrl("http://example.com/return?gateway=paynow&reference=1234");
+```
+
+Create a new payment using any of the `createPayment(...)` methods, passing in the reference for that payment (e.g invoice id, or anything that you can use to identify the transaction). For web based transactions, only the reference is required when creating the Payment object.
 
 ```java
 Payment payment = paynow.createPayment("Invoice 35");
 ```
 
-You can then start adding items to the payment
+You can then start adding items to the payment cart
 
 ```java
 // Passing in the name of the item and the price of the item
@@ -47,68 +55,69 @@ payment.add("Bananas", 2.5);
 payment.add("Apples", 3.4);
 ```
 
-Once you're done building up your cart and you're finally ready to send your payment to Paynow, you can use the `Send` method in the `paynow` object.
+Once you're done building up your cart and you're finally ready to submit the payment to Paynow, initiate the transaction. This is done by calling the `send(Payment payment)` method using the `Paynow` object you created, passing the `Payment` object you created as an argument.
 
 ```java
 // Save the response from paynow in a variable
 InitResponse response = paynow.send(payment);
 ```
 
-The send method will return an instance of the `InitResponse` class, the InitResponse object being the response from Paynow and it will contain some useful information like whether the request was successful or not. If it was, for example, it contains the url to redirect the user so they can make the payment. You can view the full list of data contained in the response in our wiki
+The send method will return an instance of the `InitResponse` class. The InitResponse object returned will contain information about the response from Paynow like whether the transaction initiation request was successful or not. For example, if it was successful, it contains the URL to redirect the user to, so they can make the payment.
 
-If request was successful, you should consider saving the poll url sent from Paynow in your database
+If the request was successful, you should consider saving the poll URL sent from Paynow in your database. To tell if the request was successful, check the success status of the transaction by calling the `success()` method.
 
 ```java
 InitResponse response = paynow.send(payment);
 
-if(response.success()) 
-{   
+if (response.success()) {   
     // Get the url to redirect the user to so they can make payment
     String link = response.redirectLink();
     
-    // Get the poll url of the transaction
+    // Get the poll URL of the transaction
     String pollUrl = response.pollUrl(); 
 }
 ```
 
-## Mobile Transactions
+## Mobile transaction usage example
 
-If you want to send an express (mobile) checkout request instead, when creating a payment you make a call to the `CreateMobilePayment` instead of the `CreatePayment` method. The `CreateMobilePayment` method unlike the `CreatePayment` method requires that you pass in the email address of the user making the payment. 
+> Note: Mobile based transactions currently only work for Ecocash with Econet numbers
 
-Additionally, you send the payment to Paynow by making a call to the `SendMobile` in the `paynow` object
-instead of the `Send` method. The `SendMobile` method unlike the `Send` method takes in two additional arguments i.e The phone number to send the payment request to and the mobile money method to use for the request. **Note that currently only ecocash is supported**
+The usage example shown in this section is a demonstration of how to initiate and complete a mobile based transaction.
+
+If you want to send an express (mobile) checkout request instead, when creating a payment you make a call to a `createPayment(...)` method that requires both the reference and email address of the user making the payment. These two arguments are required for a mobile based transaction otherwise an exception will be thrown when submitting the payment. 
 
 ```java
-// Create a mobile payment
-Payment payment = paynow.createMobilePayment("Invoice 32", "user@example.com");
-
-// Add items to the payment
-payment.add("Bananas", 2.5);
-payment.add("Apples", 3.4);
-
-// Send the payment to paynow
-paynow.sendMobile(payment)
+Payment payment = paynow.createPayment("Invoice 32", "user@example.com");
 ```
 
-The response object is almost identical to the one you get if you send a normal request. With a few differences, firstly, you don't get a url to redirect to. Instead you instructions (which ideally should be shown to the user instructing them how to make payment on their mobile phone)
+Adding items to the cart is the same as in web based transactions.
 
 ```java
-InitResponse response = paynow.sendMobile(payment);
+// Passing in the name of the item and the price of the item
+payment.add("Bananas", 2.5);
+payment.add("Apples", 3.4);
+```
+
+To submit the payment to Paynow for the transaction to be initiated, instead of using the `send(...)` method, call the the `sendMobile(...)` method using the Paynow object you created, passing the Payment object you created as an argument, the phone number of the user, and the mobile money payment method. 
+
+```java
+InitResponse response = paynow.sendMobile(payment, "0772XXXXXX","ECOCASH")
+```
+
+With mobile money transactions, the same `InitResponse` class is used to create the response object, however, the `redirectLink()` method will not return anything. Rather, make use of the `instructions()` method which will contain instructions that should ideally be shown to the user instructing them how to make the payment on their mobile phone. 
+
+```java
 
 // Check if request was successful
-if(response.success()) 
+if (response.success()) 
 {   
-    // Get the url to redirect the user to so they can make payment
-    String link = response.redirectLink();
+    // Get the instructions to show to the user
+    String instructions  = response.instructions();
     
     // Get the poll url (used to check the status of a transaction). You might want to save this in your DB
     String pollUrl = response.pollUrl(); 
     
-    // Get the instructions
-    String instructions =  response.instructions();
-}
-else
-{
+} else {
     // Ahhhhhhhhhhhhhhh
     // *freak out*
 }
@@ -116,12 +125,12 @@ else
 
 ## Checking transaction status
 
-The SDK exposes a handy method that you can use to check the status of a transaction. Once you have instantiated the Paynow class.
+It is possible to check the status of a transaction i.e. if the payment has been paid. To do this, make sure after initiating the transaction, you take note of the poll URL. With this URL, call the `pollTransaction(...)` method of the `Paynow` object you created as follows. Note that checking transaction status is the same for web and mobile based transasctions.
 
 ```java
 // Check the status of the transaction with the specified pollUrl
-// Now you see why you need to save that url ;-)
-StatusResponse status = paynow.CheckTransactionStatus(pollUrl);
+// Now you see why you need to save that URL ;-)
+StatusResponse status = paynow.pollTransaction(pollUrl);
 
 if (status.paid()) {
   // Yay! Transaction was paid for
@@ -131,6 +140,8 @@ if (status.paid()) {
 ```
 
 ## Full Usage Example
+
+The following is a full usage example for web based transactions.
 
 ```java
 // MakingFirstPayment.java
@@ -149,18 +160,26 @@ public class MakingFirstPayment {
         payment.add("Bananas", 2.5);
         payment.add("Apples", 3.4);
         
+        //Initiating the transaction
         InitResponse response = paynow.send(payment);
 
-        if(response.success()) 
-        {   
+        if (response.success()) {   
             // Get the url to redirect the user to so they can make payment
             String link = response.redirectLink();
             
             // Get the poll url of the transaction
             String pollUrl = response.pollUrl(); 
-        }
-        else
-        {
+
+            //checking if the payment has been paid
+            StatusResponse status = paynow.pollTransaction(pollUrl);
+            
+            if (status.paid()) {
+              // Yay! Transaction was paid for
+            } else {
+              System.out.println("Why you no pay?");
+            }
+
+        } else {
             // Something went wrong
               System.out.println(response.error());
         }
