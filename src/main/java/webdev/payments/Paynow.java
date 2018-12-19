@@ -223,11 +223,7 @@ public class Paynow {
         if (payment.getTotal().compareTo(BigDecimal.ZERO) <= 0) {
             throw new EmptyCartException();
         }
-
-        if (!phone.matches("07([7,8])((\\1=7)[1-9]|[2-5])\\d{6}")) {
-            throw new IllegalArgumentException("Invalid phone number");
-        }
-
+        
         return initMobile(payment, phone, method);
     }
 
