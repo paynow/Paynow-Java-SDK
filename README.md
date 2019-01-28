@@ -6,11 +6,28 @@ This library has the following set of prerequisites that must be met for it to w
 
 1.  Java JDK 6 or higher
 
-## Installation
+## Integration
 
-> Note: Project will soon be published to Maven Central Repository and will be available to install using package managers and build tools like Gradle or Maven
+To use the Java Paynow SDK, you need to add the latest release of this project as a dependency.
 
-To use the Java Paynow SDK, you need to add this project as a dependency. This can be achieved by using a multi module project structure, or by compiling this project into a jar and importing it as a dependency.
+#### Gradle
+```gradle
+repositories {
+	mavenCentral()
+}
+dependencies {
+	compile group: ‘zw.co.paynow’, name: ‘java-sdk’, version: ‘1.+’
+}
+```
+
+#### Maven
+```xml
+<dependency>
+    <groupId>zw.co.paynow</groupId>
+    <artifactId>java-sdk</artifactId>
+    <version>[1.0.0,)</version>
+</dependency>
+```
 
 ## Usage
 
