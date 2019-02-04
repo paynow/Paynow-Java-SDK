@@ -5,73 +5,97 @@ import webdev.exceptions.InvalidIntegrationException;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * This class is a wrapper around the response received from Paynow
+ * after checking the current status of a transaction
+ */
 public class StatusResponse extends CanFail implements IResponse {
-    private Map<String, String> Data;
-    private boolean WasSuccessful;
-    private String Reference;
-    private BigDecimal Amount = new BigDecimal(0);
-    private boolean WasPaid;
 
     /**
-     * InitResponse constructor.
+     * The key-value data response from Paynow.
+     */
+    private Map<String, String> data;
+
+    /**
+     * Whether the poll request was successful.
+     */
+    private boolean wasSuccessful;
+
+    /**
+     * The transaction’s reference on the merchant site, which should be unique to the transaction.
+     */
+    private String reference;
+
+    /**
+     * Amount of the transaction, in USD, to two decimal places.
+     */
+    private BigDecimal amount = new BigDecimal(0);
+
+    /**
+     * Whether the payment has been completed i.e. the amount has been paid.
+     */
+    private boolean wasPaid;
+
+    /**
+     * StatusResponse constructor.
      *
-     * @param response Response data sent from Paynow
-     * @throws InvalidIntegrationException If the error returned from paynow is
+     * @param response Response data received from Paynow
+     * @throws InvalidIntegrationException Thrown if Paynow reports that user used an invalid integration
      */
     public StatusResponse(Map<String, String> response) {
-        Data = response;
+        data = response;
 
         load();
     }
 
     public final Map<String, String> getData() {
-        return Data;
+        return data;
     }
 
     protected final boolean getWasSuccessful() {
-        return WasSuccessful;
+        return wasSuccessful;
     }
 
     protected final void setWasSuccessful(boolean value) {
-        WasSuccessful = value;
+        wasSuccessful = value;
     }
 
     public final String getReference() {
-        return Reference;
+        return reference;
     }
 
     public final void setReference(String value) {
-        Reference = value;
+        reference = value;
     }
 
     public final BigDecimal getAmount() {
-        return Amount;
+        return amount;
     }
 
     public final void setAmount(BigDecimal value) {
-        Amount = value;
+        amount = value;
     }
 
     public final boolean getWasPaid() {
-        return WasPaid;
+        return wasPaid;
     }
 
     public final void setWasPaid(boolean value) {
-        WasPaid = value;
+        wasPaid = value;
     }
 
 
     /**
-     * Gets a boolean indicating whether a request succeeded or failed
+     * Method to return whether the poll request was successful.
      *
-     * @return
+     * @return Returns true if poll request was successful otherwise returns false.
      */
     public final boolean success() {
         return getWasSuccessful();
     }
 
     /**
-     * Reads through the response data sent from Paynow
+     * Read through the raw response data received from Paynow, and set values in StatusResponse class
      */
     private void load() {
         if (!getData().containsKey("error")) {
@@ -79,7 +103,7 @@ public class StatusResponse extends CanFail implements IResponse {
         }
 
         if (getData().containsKey("status")) {
-            setWasPaid(getData().get("status").toLowerCase().equals(Constants.ResponsePaid));
+            setWasPaid(getData().get("status").toLowerCase().equals(Constants.responsePaid));
         }
 
         if (getData().containsKey("amount")) {
@@ -100,14 +124,19 @@ public class StatusResponse extends CanFail implements IResponse {
     }
 
     /**
-     * Returns the poll URL sent from Paynow
+     * Method to return the poll url
      *
-     * @return
+     * @return Returns the poll url
      */
     public final String pollUrl() {
         return getData().containsKey("pollurl") ? getData().get("pollurl") : "";
     }
 
+    /**
+     * Method to return whether the transaction was successfully complete .i.e. whether customer has paid.
+     *
+     * @return Returns true if amount has been paid, otherwise returns false.
+     */
     public final boolean paid() {
         return getWasPaid();
     }

@@ -166,7 +166,7 @@ public class Paynow {
      */
     public final StatusResponse pollTransaction(String url) throws HashMismatchException, ConnectionException {
        try  {
-           String response = getClient().PostAsync(url, null);
+           String response = getClient().postAsync(url, null);
 
            HashMap<String, String> data = Utils.parseQueryString(response);
 
@@ -247,7 +247,7 @@ public class Paynow {
             }
 
             HashMap<String, String> response = Utils.parseQueryString(
-                    getClient().PostAsync(Constants.UrlInitiateMobileTransaction, data)
+                    getClient().postAsync(Constants.urlInitiateMobileTransaction, data)
             );
 
             if (!response.get("status").toLowerCase().equals("error") && (!response.containsKey("hash") || !Hash.verify(response, getIntegrationKey()))) {
@@ -272,7 +272,7 @@ public class Paynow {
             HashMap<String, String> data = formatInitRequest(payment);
 
             HashMap<String, String> response = Utils.parseQueryString(
-                    getClient().PostAsync(Constants.UrlInitiateTransaction, data)
+                    getClient().postAsync(Constants.urlInitiateTransaction, data)
             );
 
             if (response.get("status").toLowerCase().equals("error") || !response.containsKey("hash") || !Hash.verify(response, getIntegrationKey())) {

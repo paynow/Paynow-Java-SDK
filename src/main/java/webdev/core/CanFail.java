@@ -4,12 +4,15 @@ import webdev.exceptions.InvalidIntegrationException;
 
 import java.util.ArrayList;
 
+/**
+ * Abstract class for handling errors sent by Paynow
+ */
 public abstract class CanFail {
 
     /**
      * List of errors
      */
-    private final ArrayList<String> _errors = new ArrayList<>();
+    private final ArrayList<String> errors = new ArrayList<>();
 
     /**
      * Throws an exception for critical errors and stores other non-critical errors
@@ -19,10 +22,10 @@ public abstract class CanFail {
      */
     public void fail(String error) {
         switch (error) {
-            case Constants.ResponseInvalidId:
+            case Constants.responseInvalidId:
                 throw new InvalidIntegrationException();
             default:
-                _errors.add(error);
+                errors.add(error);
                 break;
         }
     }
@@ -45,7 +48,7 @@ public abstract class CanFail {
      */
     private String errors(char separator) {
         StringBuilder sb = new StringBuilder();
-        for (String s : _errors) {
+        for (String s : errors) {
             sb.append(s);
             sb.append(separator);
         }

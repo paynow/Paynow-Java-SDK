@@ -1,7 +1,7 @@
 package webdev.exceptions;
 
 /**
- * Exception is thrown when user attempts sending an empty transaction to Paynow
+ * Exception is thrown when an empty cart is attempted to be submitted to Paynow
  */
 public class EmptyCartException extends RuntimeException {
 }

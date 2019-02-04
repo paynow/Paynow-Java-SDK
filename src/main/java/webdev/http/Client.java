@@ -21,9 +21,8 @@ public class Client {
      * @param url The url to send post request to
      * @return The response body from the request
      */
-
-    public final String PostAsync(String url) throws IOException {
-        return PostAsync(url, null);
+    public final String postAsync(String url) throws IOException {
+        return postAsync(url, null);
     }
 
     /**
@@ -31,10 +30,9 @@ public class Client {
      *
      * @param url  The url to send post request to
      * @param data The data to send in the post request body
-     *
      * @return The response body from the request
      */
-    public final String PostAsync(String url, HashMap<String, String> data) throws IOException {
+    public final String postAsync(String url, HashMap<String, String> data) throws IOException {
         // Define the server endpoint to send the HTTP request to
         URL serverUrl = new URL(url);
 

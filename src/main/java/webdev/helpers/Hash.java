@@ -10,12 +10,13 @@ import java.util.Map;
  * sent to Paynow
  */
 public final class Hash {
+
     /**
      * Hash the values in the given Map
      *
      * @param values         Values to hash
      * @param integrationKey Paynow integration key
-     * @return The hash of the files
+     * @return The generated hash
      */
     public static String make(Map<String, String> values, String integrationKey) {
         String str = concat(values).concat(integrationKey);
@@ -27,7 +28,7 @@ public final class Hash {
      * Generate a SHA512 hash of the given string
      *
      * @param input The string to hash
-     * @return The SHA512 hash of the input string
+     * @return The generated SHA512 hash of the input string
      */
     public static String generateHash(String input) {
         String hash = null;

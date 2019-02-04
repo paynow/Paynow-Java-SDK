@@ -1,10 +1,12 @@
 package webdev.payments;
 
 /**
- * @deprecated
+ * Enumeration for the mobile money method to use
+ *
+ * @deprecated No longer used in this project
  */
 public enum MobileMoneyMethod {
-    Ecocash;
+    ECOCASH, TELECASH, ONE_MONEY;
 
     public static final int SIZE = java.lang.Integer.SIZE;
 

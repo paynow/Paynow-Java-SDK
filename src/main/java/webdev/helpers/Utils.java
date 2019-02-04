@@ -84,6 +84,12 @@ public final class Utils {
         return number;
     }
 
+    /**
+     * Url decode the given string
+     *
+     * @param s The string to url decode
+     * @return The decoded string
+     */
     public static String urlDecode(String s)
     {
         try {
@@ -93,6 +99,12 @@ public final class Utils {
         }
     }
 
+    /**
+     * Validate an email string
+     *
+     * @param email The string to validate as an email
+     * @return Whether the string is a valid email i.e. true if valid
+     */
     public static boolean validateEmail(String email)
     {
         return Pattern.compile(
@@ -102,6 +114,12 @@ public final class Utils {
     }
 
 
+    /**
+     * Parse a query string from a URL
+     *
+     * @param qs Query string to parse
+     * @return Map of parsed values i.e. key and value
+     */
     public static LinkedHashMap<String, String> parseQueryString(String qs) {
         LinkedHashMap<String, String> query_pairs = new LinkedHashMap<String, String>();
         String[] pairs = qs.split("&");
@@ -112,10 +130,16 @@ public final class Utils {
         return query_pairs;
     }
 
+    /**
+     * Get string value from enum
+     *
+     * @param method The mobile money method
+     * @return String value of mobile money method
+     */
     public static String getString(MobileMoneyMethod method) {
         switch (method) {
-            case Ecocash:
-                return Constants.MobileMoneyMethodEcocash;
+            case ECOCASH:
+                return Constants.mobileMoneyMethodEcocash;
             default:
                 throw new IndexOutOfBoundsException();
         }

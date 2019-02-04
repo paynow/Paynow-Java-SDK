@@ -4,54 +4,70 @@ import webdev.exceptions.InvalidIntegrationException;
 
 import java.util.Map;
 
-
 /**
- * This class is a wrapper around the response sent from Paynow
- * when initiating a transaction
+ * This class is a wrapper around the response received from Paynow
+ * after initiating a transaction
  */
 public class InitResponse extends CanFail {
-    private Map<String, String> Data;
-    private boolean WasSuccessful;
-    private boolean HasRedirect;
+
+    /**
+     * The key-value data response from Paynow.
+     */
+    private Map<String, String> data;
+
+    /**
+     * Whether the transaction initiation was successful.
+     */
+    private boolean wasSuccessful;
+
+    /**
+     * Whether a redirect link was returned by Paynow. Redirect link is returned for web based transactions.
+     */
+    private boolean hasRedirect;
+
+    /**
+     * Instructions on how to complete mobile based transaction using specified mobile money method. Instructions are returned for mobile based transactions.
+     */
     private String instructions;
+
     /**
      * InitResponse constructor.
      *
-     * @param response Response data sent from Paynow
-     * @throws InvalidIntegrationException If the error returned from paynow is
+     * @param response Response data received from Paynow
+     * @throws InvalidIntegrationException Thrown if Paynow reports that user used an invalid integration
      */
     public InitResponse(Map<String, String> response) {
-        Data = response;
+        data = response;
 
         load();
     }
 
     public final Map<String, String> getData() {
-        return Data;
+        return data;
     }
 
     protected final boolean getWasSuccessful() {
-        return WasSuccessful;
+        return wasSuccessful;
     }
 
     protected final void setWasSuccessful(boolean value) {
-        WasSuccessful = value;
+        wasSuccessful = value;
     }
 
     protected final boolean getHasRedirect() {
-        return HasRedirect;
+        return hasRedirect;
     }
 
     protected final void setHasRedirect(boolean value) {
-        HasRedirect = value;
+        hasRedirect = value;
     }
 
     /**
-     * Reads through the response data sent from Paynow
+     * Read through the raw response data received from Paynow, and set values in InitResponse class
      */
     private void load() {
         if (getData().containsKey("status")) {
-            setWasSuccessful(getData().get("status").toLowerCase().equals(Constants.ResponseOk));
+            setWasSuccessful(getData().get("status").toLowerCase().equals(Constants.responseOk));
         }
 
         if (getData().containsKey("browserurl")) {
@@ -74,9 +90,9 @@ public class InitResponse extends CanFail {
     }
 
     /**
-     * Returns the poll URL sent from PaynowgetInstructions
+     * Method to return the poll url if it is a successful web based transaction.
      *
-     * @return
+     * @return Returns the poll url
      */
     public final String pollUrl() {
         return getData().containsKey("pollurl") ? getData().get("pollurl") : "";
@@ -84,23 +100,28 @@ public class InitResponse extends CanFail {
 
 
     /**
-     * Gets a boolean indicating whether a request succeeded or failed
+     * Method to return whether the transaction initiation was successful.
      *
-     * @return
+     * @return Returns true if transaction initiation was successful otherwise returns false.
      */
     public final boolean success() {
         return getWasSuccessful();
     }
 
     /**
-     * Returns the url the user should be taken to so they can make a payment
+     * For a web based transaction. Returns the redirect link i.e. The URL to the Paynow website that the merchant site will redirect the customer’s browser to in order to make the payment.
      *
-     * @return
+     * @return Returns the redirect link
      */
     public final String redirectLink() {
         return getHasRedirect() ? getData().get("browserurl") : "";
     }
 
+    /**
+     * For a mobile based transaction. Returns the instructions to show to the customer how to complete the payment using mobile money.
+     *
+     * @return Returns the mobile money payment instructions
+     */
     public final String instructions() {
         return getWasSuccessful() ? getInstructions() : "";
     }
