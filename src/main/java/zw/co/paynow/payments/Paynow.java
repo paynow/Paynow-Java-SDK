@@ -1,15 +1,15 @@
-package webdev.payments;
+package zw.co.paynow.payments;
 
-import webdev.core.Constants;
-import webdev.core.InitResponse;
-import webdev.core.StatusResponse;
-import webdev.exceptions.ConnectionException;
-import webdev.exceptions.EmptyCartException;
-import webdev.exceptions.HashMismatchException;
-import webdev.exceptions.InvalidReferenceException;
-import webdev.helpers.Hash;
-import webdev.helpers.Utils;
-import webdev.http.Client;
+import zw.co.paynow.core.Constants;
+import zw.co.paynow.core.InitResponse;
+import zw.co.paynow.core.StatusResponse;
+import zw.co.paynow.exceptions.ConnectionException;
+import zw.co.paynow.exceptions.EmptyCartException;
+import zw.co.paynow.exceptions.HashMismatchException;
+import zw.co.paynow.exceptions.InvalidReferenceException;
+import zw.co.paynow.helpers.Hash;
+import zw.co.paynow.helpers.Utils;
+import zw.co.paynow.http.Client;
 
 import java.io.IOException;
 import java.math.BigDecimal;

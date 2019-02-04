@@ -1,4 +1,4 @@
-package webdev.payments;
+package zw.co.paynow.payments;
 
 /**
  * Enumeration for the mobile money method to use

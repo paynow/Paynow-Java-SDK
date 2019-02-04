@@ -1,4 +1,4 @@
-package webdev.exceptions;
+package zw.co.paynow.exceptions;
 
 /**
  * Exception is thrown when an empty cart is attempted to be submitted to Paynow

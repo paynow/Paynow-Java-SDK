@@ -1,4 +1,4 @@
-package webdev.exceptions;
+package zw.co.paynow.exceptions;
 
 /**
  * Exception is thrown when user attempts sending an empty transaction reference value to Paynow

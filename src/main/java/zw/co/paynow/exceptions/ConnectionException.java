@@ -1,4 +1,4 @@
-package webdev.exceptions;
+package zw.co.paynow.exceptions;
 
 import java.lang.RuntimeException;
 

@@ -1,4 +1,4 @@
-package webdev.exceptions;
+package zw.co.paynow.exceptions;
 
 /**
  * Exception is thrown when the hash sent by Paynow is not equal to the hash generated locally

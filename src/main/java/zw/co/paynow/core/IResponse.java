@@ -1,4 +1,4 @@
-package webdev.core;
+package zw.co.paynow.core;
 
 /**
  * Base interface for all response-type classes

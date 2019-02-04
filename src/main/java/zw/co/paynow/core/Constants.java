@@ -1,4 +1,4 @@
-package webdev.core;
+package zw.co.paynow.core;
 
 /**
  * Contains a list of re-used constants

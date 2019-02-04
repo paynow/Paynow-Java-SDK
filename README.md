@@ -36,9 +36,9 @@ To get started using the SDK, do the following.
 Import the required classes as follows.
 
 ```java
-import webdev.core.*;
-import webdev.payments.Paynow;
-import webdev.payments.Payment;
+import zw.co.paynow.core.*;
+import zw.co.paynow.payments.Paynow;
+import zw.co.paynow.payments.Payment;
 ```
 
 As shown below, create an instance of `Paynow` associated with the integration ID and integration key as supplied by Paynow. The Paynow object you create can be used for multiple transactions.
@@ -162,9 +162,9 @@ The following is a full usage example for web based transactions.
 
 ```java
 // MakingFirstPayment.java
-import webdev.core.*;
-import webdev.payments.Paynow;
-import webdev.payments.Payment;
+import zw.co.paynow.core.*;
+import zw.co.paynow.payments.Paynow;
+import zw.co.paynow.payments.Payment;
 
 public class MakingFirstPayment {
 

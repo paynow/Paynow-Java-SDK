@@ -1,8 +1,9 @@
-package webdev.helpers;
+package zw.co.paynow.helpers;
 
 import java.io.UnsupportedEncodingException;
-import webdev.payments.MobileMoneyMethod;
-import webdev.core.Constants;
+import zw.co.paynow.payments.MobileMoneyMethod;
+import zw.co.paynow.core.Constants;
+
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;

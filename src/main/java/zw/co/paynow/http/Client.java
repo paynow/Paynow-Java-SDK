@@ -1,6 +1,6 @@
-package webdev.http;
+package zw.co.paynow.http;
 
-import webdev.helpers.Utils;
+import zw.co.paynow.helpers.Utils;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

@@ -1,6 +1,6 @@
-package webdev.core;
+package zw.co.paynow.core;
 
-import webdev.exceptions.InvalidIntegrationException;
+import zw.co.paynow.exceptions.InvalidIntegrationException;
 
 import java.math.BigDecimal;
 import java.util.Map;
