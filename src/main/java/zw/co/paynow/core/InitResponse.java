@@ -21,6 +21,11 @@ public class InitResponse extends CanFail {
     private boolean wasSuccessful;
 
     /**
+     * The error message if an error has occurred
+     */
+    private String error = "";
+
+    /**
      * Whether a redirect link was returned by Paynow. Redirect link is returned for web based transactions.
      */
     private boolean hasRedirect;
@@ -46,12 +51,12 @@ public class InitResponse extends CanFail {
         return data;
     }
 
-    protected final boolean getWasSuccessful() {
+    public boolean isWasSuccessful() {
         return wasSuccessful;
     }
 
-    protected final void setWasSuccessful(boolean value) {
-        wasSuccessful = value;
+    public void setWasSuccessful(boolean wasSuccessful) {
+        this.wasSuccessful = wasSuccessful;
     }
 
     protected final boolean getHasRedirect() {
@@ -78,11 +83,12 @@ public class InitResponse extends CanFail {
             setInstructions(getData().get("instructions"));
         }
 
-        if (getWasSuccessful()) {
+        if (isWasSuccessful()) {
             return;
         }
 
         if (getData().containsKey("error")) {
+            setError(getData().get("error"));
             fail(getData().get("error"));
         }
 
@@ -105,7 +111,7 @@ public class InitResponse extends CanFail {
      * @return Returns true if transaction initiation was successful otherwise returns false.
      */
     public final boolean success() {
-        return getWasSuccessful();
+        return isWasSuccessful();
     }
 
     /**
@@ -123,7 +129,7 @@ public class InitResponse extends CanFail {
      * @return Returns the mobile money payment instructions
      */
     public final String instructions() {
-        return getWasSuccessful() ? getInstructions() : "";
+        return isWasSuccessful() ? getInstructions() : "";
     }
 
     public String getInstructions() {
@@ -133,4 +139,24 @@ public class InitResponse extends CanFail {
     public void setInstructions(String instructions) {
         this.instructions = instructions;
     }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    @Override
+    public String toString() {
+        return "InitResponse{" +
+                "data=" + data +
+                ", wasSuccessful=" + wasSuccessful +
+                ", error='" + error + '\'' +
+                ", hasRedirect=" + hasRedirect +
+                ", instructions='" + instructions + '\'' +
+                '}';
+    }
+
 }

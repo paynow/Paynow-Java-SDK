@@ -1,6 +1,7 @@
 package zw.co.paynow.helpers;
 
 import java.io.UnsupportedEncodingException;
+
 import zw.co.paynow.payments.MobileMoneyMethod;
 import zw.co.paynow.core.Constants;
 
@@ -13,13 +14,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public final class Utils {
-    public static BigDecimal b(double value)
-    {
+
+    public static BigDecimal b(double value) {
         return new BigDecimal(value);
     }
 
-    public static BigDecimal b(int value)
-    {
+    public static BigDecimal b(int value) {
         return new BigDecimal(value);
     }
 
@@ -91,8 +91,7 @@ public final class Utils {
      * @param s The string to url decode
      * @return The decoded string
      */
-    public static String urlDecode(String s)
-    {
+    public static String urlDecode(String s) {
         try {
             return URLDecoder.decode(s, "UTF-8");
         } catch (Exception e) {
@@ -106,8 +105,7 @@ public final class Utils {
      * @param email The string to validate as an email
      * @return Whether the string is a valid email i.e. true if valid
      */
-    public static boolean validateEmail(String email)
-    {
+    public static boolean validateEmail(String email) {
         return Pattern.compile(
                 "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
         )
@@ -131,18 +129,4 @@ public final class Utils {
         return query_pairs;
     }
 
-    /**
-     * Get string value from enum
-     *
-     * @param method The mobile money method
-     * @return String value of mobile money method
-     */
-    public static String getString(MobileMoneyMethod method) {
-        switch (method) {
-            case ECOCASH:
-                return Constants.mobileMoneyMethodEcocash;
-            default:
-                throw new IndexOutOfBoundsException();
-        }
-    }
 }

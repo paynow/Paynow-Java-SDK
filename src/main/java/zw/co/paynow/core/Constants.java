@@ -17,6 +17,4 @@ public final class Constants {
     //URL for initiating a mobile transaction
     public static final String urlInitiateMobileTransaction = "https://www.paynow.co.zw/interface/remotetransaction";
 
-    //Mobile money method constants
-    public static final String mobileMoneyMethodEcocash = "ecocash";
 }

@@ -141,4 +141,15 @@ public class StatusResponse extends CanFail implements IResponse {
         return getWasPaid();
     }
 
+    @Override
+    public String toString() {
+        return "StatusResponse{" +
+                "data=" + data +
+                ", wasSuccessful=" + wasSuccessful +
+                ", reference='" + reference + '\'' +
+                ", amount=" + amount +
+                ", wasPaid=" + wasPaid +
+                '}';
+    }
+
 }

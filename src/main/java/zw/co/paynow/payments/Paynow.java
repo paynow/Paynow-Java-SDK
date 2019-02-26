@@ -20,23 +20,23 @@ public class Paynow {
     /**
      * Merchant's return url
      */
-    private String ResultUrl = "http://localhost";
+    private String resultUrl = "http://localhost";
     /**
      * Merchant's result url
      */
-    private String ReturnUrl = "http://localhost";
+    private String returnUrl = "http://localhost";
     /**
      * Merchant's integration id
      */
-    private String IntegrationKey;
+    private String integrationKey;
     /**
-     * Client for making http requests
+     * client for making http requests
      */
-    private Client Client;
+    private Client client;
     /**
      * Merchant's integration key
      */
-    private String IntegrationId;
+    private String integrationId;
 
     /**
      * Paynow constructor
@@ -71,43 +71,43 @@ public class Paynow {
     }
 
     public final String getResultUrl() {
-        return ResultUrl;
+        return resultUrl;
     }
 
     public final void setResultUrl(String value) {
-        ResultUrl = value;
+        resultUrl = value;
     }
 
     public final String getReturnUrl() {
-        return ReturnUrl;
+        return returnUrl;
     }
 
     public final void setReturnUrl(String value) {
-        ReturnUrl = value;
+        returnUrl = value;
     }
 
     public final String getIntegrationKey() {
-        return IntegrationKey;
+        return integrationKey;
     }
 
     public final void setIntegrationKey(String value) {
-        IntegrationKey = value;
+        integrationKey = value;
     }
 
     public final Client getClient() {
-        return Client;
+        return client;
     }
 
     public final void setClient(Client value) {
-        Client = value;
+        client = value;
     }
 
     public final String getIntegrationId() {
-        return IntegrationId;
+        return integrationId;
     }
 
     public final void setIntegrationId(String value) {
-        IntegrationId = value;
+        integrationId = value;
     }
 
     /**
@@ -158,26 +158,24 @@ public class Paynow {
      * Polls the given poll url for a status update
      *
      * @param url The poll url to hit
-     *
-     * @throws HashMismatchException Thrown when hashes do not match
-     * @throws ConnectionException Thrown when http request fails to go through
-     *
      * @return The response from Paynow
+     * @throws HashMismatchException Thrown when hashes do not match
+     * @throws ConnectionException   Thrown when http request fails to go through
      */
     public final StatusResponse pollTransaction(String url) throws HashMismatchException, ConnectionException {
-       try  {
-           String response = getClient().postAsync(url, null);
+        try {
+            String response = getClient().postAsync(url, null);
 
-           HashMap<String, String> data = Utils.parseQueryString(response);
+            HashMap<String, String> data = Utils.parseQueryString(response);
 
-           if (!data.containsKey("hash") || !Hash.verify(data, getIntegrationKey())) {
-               throw new HashMismatchException(data.get("Error"));
-           }
+            if (!data.containsKey("hash") || !Hash.verify(data, getIntegrationKey())) {
+                throw new HashMismatchException(data.get("Error"));
+            }
 
-           return new StatusResponse(data);
-       } catch (IOException ex) {
-           throw new ConnectionException(ex.getMessage());
-       }
+            return new StatusResponse(data);
+        } catch (IOException ex) {
+            throw new ConnectionException(ex.getMessage());
+        }
     }
 
     /**
@@ -202,10 +200,8 @@ public class Paynow {
      * Process a status update from Paynow
      *
      * @param response Key-value pairs of data sent from Paynow
-     *
-     * @throws HashMismatchException Thrown when hashes do not match
-     *
      * @return The status response from Paynow
+     * @throws HashMismatchException Thrown when hashes do not match
      */
     public final StatusResponse processStatusUpdate(HashMap<String, String> response) {
         if (!response.containsKey("hash") || !Hash.verify(response, getIntegrationKey())) {
@@ -215,7 +211,7 @@ public class Paynow {
         return new StatusResponse(response);
     }
 
-    public final InitResponse sendMobile(Payment payment, String phone, String method) {
+    public final InitResponse sendMobile(Payment payment, String phone, MobileMoneyMethod mMoneyMethod) {
         if (payment.getReference().isEmpty()) {
             throw new InvalidReferenceException();
         }
@@ -223,26 +219,25 @@ public class Paynow {
         if (payment.getTotal().compareTo(BigDecimal.ZERO) <= 0) {
             throw new EmptyCartException();
         }
-        
-        return initMobile(payment, phone, method);
+
+        return initMobile(payment, phone, mMoneyMethod);
     }
 
     /**
      * Initiate a new Paynow mobile transaction
      *
      * @param payment The payment to send to Paynow
-     * @param phone Payer's phone number
-     * @param method The mobile money method to use
-     *
+     * @param phone   Payer's phone number
+     * @param mMoneyMethod  The mobile money method to use
      * @return The response from Paynow
      */
-    private InitResponse initMobile(Payment payment, String phone, String method) throws ConnectionException, HashMismatchException {
+    private InitResponse initMobile(Payment payment, String phone, MobileMoneyMethod mMoneyMethod) throws ConnectionException, HashMismatchException {
         try {
-            HashMap<String, String> data = formatMobileInitRequest(payment, phone, method);
+            HashMap<String, String> data = formatMobileInitRequest(payment, phone, mMoneyMethod);
 
             String email = data.get("authemail");
 
-            if(email == null || email.isEmpty() || !Utils.validateEmail(email)) {
+            if (email == null || email.isEmpty() || !Utils.validateEmail(email)) {
                 throw new IllegalArgumentException("Auth email is required for mobile transactions. Please pass a valid email address to the createPayment method");
             }
 
@@ -312,17 +307,17 @@ public class Paynow {
      *
      * @param payment The transaction to be sent to Paynow
      * @param phone   The user's phone number
-     * @param method  The mobile transaction method i.e ecocash, telecash
+     * @param mMoneyMethod  The mobile transaction method i.e ecocash, telecash
      * @return
      */
-    private HashMap<String, String> formatMobileInitRequest(Payment payment, String phone, String method) {
+    private HashMap<String, String> formatMobileInitRequest(Payment payment, String phone, MobileMoneyMethod mMoneyMethod) {
         HashMap<String, String> items = payment.toDictionary();
 
         items.put("returnurl", getReturnUrl().trim());
         items.put("resulturl", getResultUrl().trim());
         items.put("id", getIntegrationId());
         items.put("phone", phone);
-        items.put("method", method);
+        items.put("method", mMoneyMethod.toString());
 
         items.put("hash", Hash.make(items, getIntegrationKey()));
 

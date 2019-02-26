@@ -118,7 +118,7 @@ payment.add("Apples", 3.4);
 To submit the payment to Paynow for the transaction to be initiated, instead of using the `send(...)` method, call the the `sendMobile(...)` method using the Paynow object you created, passing the Payment object you created as an argument, the phone number of the user, and the mobile money payment method. 
 
 ```java
-InitResponse response = paynow.sendMobile(payment, "0772XXXXXX","ECOCASH")
+InitResponse response = paynow.sendMobile(payment, "0772XXXXXX", MobileMoneyMethod.ECOCASH)
 ```
 
 With mobile money transactions, the same `InitResponse` class is used to create the response object, however, the `redirectLink()` method will not return anything. Rather, make use of the `instructions()` method which will contain instructions that should ideally be shown to the user instructing them how to make the payment on their mobile phone. 
