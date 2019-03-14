@@ -8,6 +8,10 @@ public final class Constants {
     //Response constants
     public static final String responseOk = "ok";
     public static final String responsePaid = "paid";
+    public static final String ResponseCancelled = "cancelled";
+    public static final String ResponseDisputed = "disputed";
+    public static final String ResponseRefunded = "refunded";
+
     public static final String responseError = "error";
     public static final String responseInvalidId = "invalid id.";
 
@@ -17,4 +21,6 @@ public final class Constants {
     //URL for initiating a mobile transaction
     public static final String urlInitiateMobileTransaction = "https://www.paynow.co.zw/interface/remotetransaction";
 
+    //Mobile money method constants
+    public static final String mobileMoneyMethodEcocash = "ecocash";
 }
