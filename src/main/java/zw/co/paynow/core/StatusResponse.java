@@ -140,5 +140,20 @@ public class StatusResponse extends CanFail implements IResponse {
     public final boolean paid() {
         return getWasPaid();
     }
+   
+
+    /**
+     * Method to return whether the transaction was cancelled by customer
+     * @return Returns true if customer cancelled payment or payment was refunded, otherwise returns false
+     */
+    public final boolean cancelled() {
+        if (getData().containsKey("status")) {
+            String status = getData().get("status").toLowerCase();
+            return (status.equals(Constants.ResponseCancelled)) || status.equals(Constants.ResponseRefunded);
+        } else {
+            return false;
+        }
+    }
+
 
 }
