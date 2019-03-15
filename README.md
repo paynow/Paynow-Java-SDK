@@ -37,8 +37,8 @@ Import the required classes as follows.
 
 ```java
 import zw.co.paynow.core.*;
-import zw.co.paynow.payments.Paynow;
-import zw.co.paynow.payments.Payment;
+import zw.co.paynow.core.Paynow;
+import zw.co.paynow.core.Payment;
 ```
 
 As shown below, create an instance of `Paynow` associated with the integration ID and integration key as supplied by Paynow. The Paynow object you create can be used for multiple transactions.
@@ -51,14 +51,14 @@ Paynow paynow = new Paynow("INTEGRATION_ID", "INTEGRATION_KEY");
 
 The usage example shown in this section is a demonstration of how to initiate and complete a web based transaction.
 
-After creating the Paynow object, optionally set the result and return URLs. The return URL can be set at later stages, for example, you might want to do this if you want to pass data to the return url ( the reference of the transaction as shown below).
+After creating the Paynow object, optionally set the result and return URLs. The return URL can be set at later stages, for example, you might want to do this if you want to pass data to the return url ( the merchantReference of the transaction as shown below).
 
 ```java
 paynow.setResultUrl("http://example.com/gateways/paynow/update");
-paynow.setReturnUrl("http://example.com/return?gateway=paynow&reference=1234");
+paynow.setReturnUrl("http://example.com/return?gateway=paynow&merchantReference=1234");
 ```
 
-Create a new payment using any of the `createPayment(...)` methods, passing in the reference for that payment (e.g invoice id, or anything that you can use to identify the transaction). For web based transactions, only the reference is required when creating the Payment object.
+Create a new payment using any of the `createPayment(...)` methods, passing in the merchantReference for that payment (e.g invoice id, or anything that you can use to identify the transaction). For web based transactions, only the merchantReference is required when creating the Payment object.
 
 ```java
 Payment payment = paynow.createPayment("Invoice 35");
@@ -70,6 +70,7 @@ You can then start adding items to the payment cart
 // Passing in the name of the item and the price of the item
 payment.add("Bananas", 2.5);
 payment.add("Apples", 3.4);
+payment.setCartDescription("custom desc");
 ```
 
 Once you're done building up your cart and you're finally ready to submit the payment to Paynow, initiate the transaction. This is done by calling the `send(Payment payment)` method using the `Paynow` object you created, passing the `Payment` object you created as an argument.
@@ -101,7 +102,7 @@ if (response.success()) {
 
 The usage example shown in this section is a demonstration of how to initiate and complete a mobile based transaction.
 
-If you want to send an express (mobile) checkout request instead, when creating a payment you make a call to a `createPayment(...)` method that requires both the reference and email address of the user making the payment. These two arguments are required for a mobile based transaction otherwise an exception will be thrown when submitting the payment. 
+If you want to send an express (mobile) checkout request instead, when creating a payment you make a call to a `createPayment(...)` method that requires both the merchantReference and email address of the user making the payment. These two arguments are required for a mobile based transaction otherwise an exception will be thrown when submitting the payment. 
 
 ```java
 Payment payment = paynow.createPayment("Invoice 32", "user@example.com");
@@ -163,8 +164,8 @@ The following is a full usage example for web based transactions.
 ```java
 // MakingFirstPayment.java
 import zw.co.paynow.core.*;
-import zw.co.paynow.payments.Paynow;
-import zw.co.paynow.payments.Payment;
+import zw.co.paynow.core.Paynow;
+import zw.co.paynow.core.Payment;
 
 public class MakingFirstPayment {
 

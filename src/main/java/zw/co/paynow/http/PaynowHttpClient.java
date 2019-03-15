@@ -1,6 +1,6 @@
 package zw.co.paynow.http;
 
-import zw.co.paynow.helpers.Utils;
+import zw.co.paynow.parsers.UrlParser;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 /**
- * This class handles sending HTTP requests in the application
+ * Handles sending HTTP requests in the application
  */
-public class Client {
+public class PaynowHttpClient {
 
     /**
      * Send an empty post request to the given URL
@@ -45,7 +45,7 @@ public class Client {
         // Writing the post data to the HTTP request body
         BufferedWriter httpRequestBodyWriter =
                 new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
-        httpRequestBodyWriter.write(data == null ? "" : Utils.urlEncode(data));
+        httpRequestBodyWriter.write(data == null ? "" : UrlParser.urlEncode(data));
         httpRequestBodyWriter.close();
 
         // Reading from the HTTP response body

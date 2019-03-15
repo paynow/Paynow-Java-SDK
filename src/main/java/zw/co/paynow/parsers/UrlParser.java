@@ -1,27 +1,15 @@
-package zw.co.paynow.helpers;
+package zw.co.paynow.parsers;
 
 import java.io.UnsupportedEncodingException;
-
-import zw.co.paynow.payments.MobileMoneyMethod;
-import zw.co.paynow.core.Constants;
-
-import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-public final class Utils {
-
-    public static BigDecimal b(double value) {
-        return new BigDecimal(value);
-    }
-
-    public static BigDecimal b(int value) {
-        return new BigDecimal(value);
-    }
+/**
+ * Decode/encode various parts of the URL
+ */
+public class UrlParser {
 
     /**
      * Url encode the given string
@@ -57,34 +45,6 @@ public final class Utils {
         return sb.toString();
     }
 
-
-    public static String flattenCollection(HashMap<String, BigDecimal> items) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Map.Entry<String, BigDecimal> pair : items.entrySet()) {
-            sb.append(pair.getKey());
-            sb.append(", ");
-        }
-
-        return sb.toString();
-    }
-
-    /**
-     * Compute the total of the values in a Payment object
-     *
-     * @param items The collection of values
-     * @return The total of the items
-     */
-    public static BigDecimal addCollectionValues(HashMap<String, BigDecimal> items) {
-        BigDecimal number = BigDecimal.ZERO;
-
-        for (Map.Entry<String, BigDecimal> pair : items.entrySet()) {
-            number = number.add(pair.getValue());
-        }
-
-        return number;
-    }
-
     /**
      * Url decode the given string
      *
@@ -100,20 +60,6 @@ public final class Utils {
     }
 
     /**
-     * Validate an email string
-     *
-     * @param email The string to validate as an email
-     * @return Whether the string is a valid email i.e. true if valid
-     */
-    public static boolean validateEmail(String email) {
-        return Pattern.compile(
-                "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
-        )
-                .matcher(email).matches();
-    }
-
-
-    /**
      * Parse a query string from a URL
      *
      * @param qs Query string to parse
@@ -124,7 +70,7 @@ public final class Utils {
         String[] pairs = qs.split("&");
         for (String pair : pairs) {
             int idx = pair.indexOf("=");
-            query_pairs.put(urlDecode(pair.substring(0, idx)), urlDecode(pair.substring(idx + 1)));
+            query_pairs.put(UrlParser.urlDecode(pair.substring(0, idx)), UrlParser.urlDecode(pair.substring(idx + 1)));
         }
         return query_pairs;
     }

@@ -1,4 +1,4 @@
-package zw.co.paynow.helpers;
+package zw.co.paynow.core;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -9,10 +9,10 @@ import java.util.Map;
  * This class handles generating hashes for transactions being
  * sent to Paynow
  */
-public final class Hash {
+public final class HashGenerator {
 
     /**
-     * Hash the values in the given Map
+     * HashGenerator the values in the given Map
      *
      * @param values         Values to hash
      * @param integrationKey Paynow integration key
@@ -49,7 +49,6 @@ public final class Hash {
     }
 
 
-
     /**
      * Concatenates the values to be sent to Paynow
      *
@@ -60,7 +59,7 @@ public final class Hash {
         StringBuilder sb = new StringBuilder();
 
         for (Map.Entry<String, String> pair : items.entrySet()) {
-            if (pair.getKey().toLowerCase().equals("hash")) continue;
+            if (pair.getKey().equalsIgnoreCase("hash")) continue;
 
             sb.append(pair.getValue());
         }
@@ -76,6 +75,7 @@ public final class Hash {
      * @return Boolean value indicating whether hashes match or not. True for match, false for mismatch
      */
     public static boolean verify(Map<String, String> data, String integrationKey) {
-        return make(data, integrationKey).equals(data.get("hash"));
+        return make(data, integrationKey).equalsIgnoreCase(data.get("hash"));
     }
+
 }
