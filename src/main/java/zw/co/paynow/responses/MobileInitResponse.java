@@ -47,4 +47,9 @@ public class MobileInitResponse extends InitResponse {
     public String getInstructions() {
         return instructions;
     }
+
+    public String instructions() {
+        return getInstructions();
+    }
+
 }

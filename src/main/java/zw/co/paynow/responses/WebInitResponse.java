@@ -34,4 +34,8 @@ public class WebInitResponse extends InitResponse {
         return redirectURL;
     }
 
+    public String redirectURL() {
+        return getRedirectURL();
+    }
+
 }

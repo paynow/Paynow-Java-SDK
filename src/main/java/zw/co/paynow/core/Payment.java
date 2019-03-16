@@ -69,7 +69,7 @@ public class Payment {
      * @param title  The name of the item
      * @param amount The cost of the item
      */
-    public final Payment addToCart(String title, double amount) {
+    public final Payment add(String title, double amount) {
         cart.put(title, new BigDecimal(amount));
         return this;
     }
@@ -80,7 +80,7 @@ public class Payment {
      * @param title  The name of the item
      * @param amount The cost of the item
      */
-    public final Payment addToCart(String title, int amount) {
+    public final Payment add(String title, int amount) {
         cart.put(title, new BigDecimal(amount));
 
         return this;
@@ -92,7 +92,7 @@ public class Payment {
      * @param title  The name of the item
      * @param amount The cost of the item
      */
-    public final Payment addToCart(String title, BigDecimal amount) {
+    public final Payment add(String title, BigDecimal amount) {
         cart.put(title, amount);
 
         return this;

@@ -80,4 +80,8 @@ public abstract class InitResponse extends PaynowResponse {
         return pollUrl;
     }
 
+    public String pollUrl() {
+        return getPollUrl();
+    }
+
 }

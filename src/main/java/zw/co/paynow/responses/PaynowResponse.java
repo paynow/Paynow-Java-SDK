@@ -80,6 +80,11 @@ public abstract class PaynowResponse {
         return requestSuccess;
     }
 
+    //GETTER METHODS
+    public boolean success() {
+        return isRequestSuccess();
+    }
+
     public Map<String, String> getRawResponseContent() {
         return new HashMap<>(rawResponseContent);
     }

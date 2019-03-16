@@ -148,7 +148,7 @@ public class Paynow {
      * @throws InvalidReferenceException Thrown if reference is empty
      * @throws EmptyCartException        Thrown if cart cart total is less than or equal to zero
      */
-    public final WebInitResponse submitWebTransaction(Payment payment) {
+    public final WebInitResponse send(Payment payment) {
         if (payment.getMerchantReference().isEmpty()) {
             throw new InvalidReferenceException();
         }
@@ -209,7 +209,7 @@ public class Paynow {
         return new StatusResponse(response);
     }
 
-    public final MobileInitResponse submitMobileTransaction(Payment payment, String phone, MobileMoneyMethod mMoneyMethod) {
+    public final MobileInitResponse sendMobile(Payment payment, String phone, MobileMoneyMethod mMoneyMethod) {
         if (payment.getMerchantReference().isEmpty()) {
             throw new InvalidReferenceException();
         }

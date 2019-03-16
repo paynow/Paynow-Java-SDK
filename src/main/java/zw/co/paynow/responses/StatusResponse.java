@@ -123,6 +123,10 @@ public class StatusResponse extends PaynowResponse {
         return new BigDecimal(amount.doubleValue()).round(new MathContext(2, RoundingMode.HALF_UP));
     }
 
+    public boolean paid() {
+        return isPaid();
+    }
+
     public boolean isPaid() {
         return paid;
     }
