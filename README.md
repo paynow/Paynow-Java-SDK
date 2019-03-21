@@ -18,7 +18,7 @@ repositories {
 	mavenCentral()
 }
 dependencies {
-	compile group: ‘zw.co.paynow’, name: ‘java-sdk’, version: ‘1.0.0’
+	implementation 'zw.co.paynow:java-sdk:1.0.0'
 }
 ```
 
