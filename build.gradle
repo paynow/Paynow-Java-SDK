@@ -16,18 +16,19 @@ plugins {
 
 apply plugin: 'io.codearte.nexus-staging'
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from Javadoc
-}
-
-task sourcesJar(type: Jar) {
+task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 artifacts {
-    archives javadocJar, sourcesJar
+    archives sourcesJar
+    archives javadocJar
 }
 
 repositories {
@@ -105,7 +106,6 @@ allprojects {
 }
 
 nexusStaging {
-    packageGroup = "zw.co.paynow"
     username = nexusUsername
     password = nexusPassword
 }
