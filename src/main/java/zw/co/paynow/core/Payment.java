@@ -19,14 +19,14 @@ public class Payment {
     /**
      * The description of the transaction as set by the merchant
      */
-    public String cartDescription = "";
+    private String cartDescription = "";
 
     /**
      * (optional) If the field is present and set to an email address Paynow will attempt to auto
      * login the customers email address as an anonymous user. If the email address has a registered account
      * the user will be prompted to login to that account.
      */
-    public String authEmail = "";
+    private String authEmail = "";
 
     /**
      * The transaction’s reference on the merchant site, this should be unique to the transaction.
@@ -44,7 +44,7 @@ public class Payment {
      * @param merchantReference Unique transaction’s merchantReference on the merchant site
      * @param authEmail         E-mail address of the user making the payment. Will be used to automatically login if possible
      */
-    public Payment(String merchantReference, String authEmail) {
+    Payment(String merchantReference, String authEmail) {
         this.merchantReference = merchantReference;
         cart = new HashMap<>();
         this.authEmail = authEmail;
@@ -57,7 +57,7 @@ public class Payment {
      * @param cart              List of items in the cart
      * @param authEmail         E-mail address of the user making the payment. Will be used to automatically login if possible
      */
-    public Payment(String merchantReference, HashMap<String, BigDecimal> cart, String authEmail) {
+    Payment(String merchantReference, HashMap<String, BigDecimal> cart, String authEmail) {
         this.merchantReference = merchantReference;
         this.cart = cart;
         this.authEmail = authEmail;
@@ -99,7 +99,7 @@ public class Payment {
     }
 
     /**
-     * Removes an item from the transaction
+     * Removes an item from the cart
      *
      * @param title The name of the item
      */
@@ -116,7 +116,7 @@ public class Payment {
     /**
      * Calculate the total amount of the cart in the cart for the transaction
      */
-    private BigDecimal calculateTotal() {
+    protected BigDecimal calculateTotal() {
         return PaymentParser.addCollectionValues(cart).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
@@ -171,14 +171,18 @@ public class Payment {
     }
 
     public HashMap<String, BigDecimal> getCart() {
-        return new HashMap<>(cart);
+        return cart;
+    }
+
+    public void setCart(HashMap<String, BigDecimal> cart) {
+        this.cart = cart;
     }
 
     public String getCartDescription() {
         if (this.overrideDescription) {
-            return PaymentParser.flattenCollection(cart).trim();
-        } else {
             return this.cartDescription;
+        } else {
+            return PaymentParser.flattenCollection(cart).trim();
         }
     }
     //END OF GETTER AND SETTER METHODS

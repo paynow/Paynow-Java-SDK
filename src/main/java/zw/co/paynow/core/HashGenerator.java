@@ -1,5 +1,7 @@
 package zw.co.paynow.core;
 
+import zw.co.paynow.exceptions.HashGenerationFailedException;
+
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -41,11 +43,12 @@ public final class HashGenerator {
 
             hash = String.format("%040x", new BigInteger(1, digest.digest()));
 
+            return hash.toUpperCase();
+
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new HashGenerationFailedException();
         }
 
-        return hash.toUpperCase();
     }
 
 

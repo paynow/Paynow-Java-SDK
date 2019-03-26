@@ -13,7 +13,7 @@ import java.util.Scanner;
 /**
  * Handles sending HTTP requests in the application
  */
-public class PaynowHttpClient {
+public class HttpClient {
 
     /**
      * Send an empty post request to the given URL
@@ -21,7 +21,7 @@ public class PaynowHttpClient {
      * @param url The url to send post request to
      * @return The response body from the request
      */
-    public final String postAsync(String url) throws IOException {
+    public String postAsync(String url) throws IOException {
         return postAsync(url, null);
     }
 
@@ -32,7 +32,8 @@ public class PaynowHttpClient {
      * @param data The data to send in the post request body
      * @return The response body from the request
      */
-    public final String postAsync(String url, HashMap<String, String> data) throws IOException {
+    public String postAsync(String url, HashMap<String, String> data) throws IOException {
+
         // Define the server endpoint to send the HTTP request to
         URL serverUrl = new URL(url);
 
@@ -45,7 +46,7 @@ public class PaynowHttpClient {
         // Writing the post data to the HTTP request body
         BufferedWriter httpRequestBodyWriter =
                 new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
-        httpRequestBodyWriter.write(data == null ? "" : UrlParser.urlEncode(data));
+        httpRequestBodyWriter.write(data == null ? "" : UrlParser.parseQueryStringFromMap(data));
         httpRequestBodyWriter.close();
 
         // Reading from the HTTP response body
@@ -59,4 +60,5 @@ public class PaynowHttpClient {
 
         return sb.toString();
     }
+
 }

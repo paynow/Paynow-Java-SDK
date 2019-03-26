@@ -11,7 +11,7 @@ public enum TransactionStatus {
     PAID("Paid", "Transaction paid successfully, the merchant will receive the funds at next settlement."),
     CANCELLED("Cancelled", "The transaction has been cancelled in Paynow and may not be resumed and needs to be recreated."),
     SENT("Sent", "Transaction has been created in Paynow and an up stream system, the customer has been referred to that upstream system but has not yet made payment."),
-    DELIVERY("Awaiting Delivery", ""),
+    DELIVERY("Awaiting Delivery", "Transaction paid successfully, but is sitting in suspense waiting on the merchant to confirm delivery of the goods."),
     DISPUTED("Disputed", "Transaction has been disputed by the Customer and funds are being held in suspense until the dispute has been resolved."),
     REFUNDED("Refunded", "Funds were refunded back to the customer."),
     DELIVERED("Delivered", "The user or merchant has acknowledged delivery of the goods but the funds are still sitting in suspense awaiting the 24 hour confirmation window to close."),
@@ -30,9 +30,9 @@ public enum TransactionStatus {
         this.description = description;
     }
 
-    public static TransactionStatus getTransactionStatus(String string) {
+    public static TransactionStatus getTransactionStatus(String responseString) {
         for (TransactionStatus transactionStatus : TransactionStatus.values()) {
-            if (transactionStatus.getResponseString().equalsIgnoreCase(string)) {
+            if (transactionStatus.getResponseString().equalsIgnoreCase(responseString)) {
                 return transactionStatus;
             }
         }

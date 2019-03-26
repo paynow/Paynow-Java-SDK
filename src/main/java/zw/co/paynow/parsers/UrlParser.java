@@ -26,12 +26,12 @@ public class UrlParser {
     }
 
     /**
-     * Format a map as a query string
+     * Parse a map to a query string
      *
      * @param map The map to format
      * @return Formatted query string
      */
-    public static String urlEncode(Map<?, ?> map) {
+    public static String parseQueryStringFromMap(Map<?, ?> map) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             if (sb.length() > 0) {
@@ -60,19 +60,22 @@ public class UrlParser {
     }
 
     /**
-     * Parse a query string from a URL
+     * Parse a query string to a map
      *
      * @param qs Query string to parse
      * @return Map of parsed values i.e. key and value
      */
-    public static LinkedHashMap<String, String> parseQueryString(String qs) {
-        LinkedHashMap<String, String> query_pairs = new LinkedHashMap<String, String>();
-        String[] pairs = qs.split("&");
-        for (String pair : pairs) {
-            int idx = pair.indexOf("=");
-            query_pairs.put(UrlParser.urlDecode(pair.substring(0, idx)), UrlParser.urlDecode(pair.substring(idx + 1)));
+    public static LinkedHashMap<String, String> parseMapFromQueryString(String qs) {
+
+        LinkedHashMap<String, String> queryPairs = new LinkedHashMap<String, String>();
+        if (qs.length() > 1) {
+            String[] pairs = qs.split("&");
+            for (String pair : pairs) {
+                int idx = pair.indexOf("=");
+                queryPairs.put(UrlParser.urlDecode(pair.substring(0, idx)), UrlParser.urlDecode(pair.substring(idx + 1)));
+            }
         }
-        return query_pairs;
+        return queryPairs;
     }
 
 }

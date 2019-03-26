@@ -1,6 +1,5 @@
 package zw.co.paynow.responses;
 
-import zw.co.paynow.constants.TransactionType;
 import zw.co.paynow.exceptions.InvalidIntegrationException;
 
 import java.util.Map;

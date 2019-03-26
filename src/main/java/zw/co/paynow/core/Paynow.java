@@ -6,9 +6,8 @@ import zw.co.paynow.exceptions.ConnectionException;
 import zw.co.paynow.exceptions.EmptyCartException;
 import zw.co.paynow.exceptions.HashMismatchException;
 import zw.co.paynow.exceptions.InvalidReferenceException;
-import zw.co.paynow.http.PaynowHttpClient;
+import zw.co.paynow.http.HttpClient;
 import zw.co.paynow.parsers.UrlParser;
-import zw.co.paynow.responses.InitResponse;
 import zw.co.paynow.responses.MobileInitResponse;
 import zw.co.paynow.responses.StatusResponse;
 import zw.co.paynow.responses.WebInitResponse;
@@ -31,7 +30,7 @@ public class Paynow {
     private String resultUrl = "http://localhost";
 
     /**
-     * The URL on the merchant website the customer will be returned to after the transaction
+     * The URL on the merchant website the customer will be redirected to after the transaction
      * has been processed. It is recommended this URL contains enough information for the merchant
      * site to identify the transaction.
      */
@@ -50,9 +49,9 @@ public class Paynow {
     private String integrationKey;
 
     /**
-     * Http httpPaynowHttpClient for making http requests
+     * Http httpHttpClient for making http requests
      */
-    private PaynowHttpClient httpPaynowHttpClient;
+    private HttpClient httpHttpClient;
 
     /**
      * Constructor for new Paynow object
@@ -88,7 +87,7 @@ public class Paynow {
             this.resultUrl = resultUrl;
         }
 
-        httpPaynowHttpClient = new PaynowHttpClient();
+        httpHttpClient = new HttpClient();
     }
 
     /**
@@ -149,6 +148,17 @@ public class Paynow {
      * @throws EmptyCartException        Thrown if cart cart total is less than or equal to zero
      */
     public final WebInitResponse send(Payment payment) {
+        validatePayment(payment);
+
+        return initWebTransaction(payment);
+    }
+
+    /**
+     * Ensure payment field values are valid
+     *
+     * @param payment 'Payment' to validate
+     */
+    private void validatePayment(Payment payment) {
         if (payment.getMerchantReference().isEmpty()) {
             throw new InvalidReferenceException();
         }
@@ -156,8 +166,17 @@ public class Paynow {
         if (payment.getTotal().compareTo(BigDecimal.ZERO) <= 0) {
             throw new EmptyCartException();
         }
+    }
 
-        return initWebTransaction(payment);
+    /**
+     * Verify map has valid hash
+     *
+     * @param data Hashmap to validate
+     */
+    private void verifyHash(HashMap<String, String> data) {
+        if (!data.containsKey("hash") || !HashGenerator.verify(data, integrationKey)) {
+            throw new HashMismatchException(data.get("Error"));
+        }
     }
 
     /**
@@ -170,7 +189,7 @@ public class Paynow {
      */
     public final StatusResponse pollTransaction(String url) throws HashMismatchException, ConnectionException {
         try {
-            String response = httpPaynowHttpClient.postAsync(url, null);
+            String response = httpHttpClient.postAsync(url, null);
             return parseStatus(response);
         } catch (IOException ex) {
             throw new ConnectionException(ex.getMessage());
@@ -185,11 +204,8 @@ public class Paynow {
      * @throws HashMismatchException Thrown when hashes do not match
      */
     protected StatusResponse parseStatus(String response) throws HashMismatchException {
-        HashMap<String, String> data = UrlParser.parseQueryString(response);
-
-        if (!data.containsKey("hash") || !HashGenerator.verify(data, integrationKey)) {
-            throw new HashMismatchException(data.get("Error"));
-        }
+        HashMap<String, String> data = UrlParser.parseMapFromQueryString(response);
+        verifyHash( data);
 
         return new StatusResponse(data);
     }
@@ -202,21 +218,12 @@ public class Paynow {
      * @throws HashMismatchException Thrown when hashes do not match
      */
     protected final StatusResponse parseStatus(HashMap<String, String> response) {
-        if (!response.containsKey("hash") || !HashGenerator.verify(response, integrationKey)) {
-            throw new HashMismatchException(response.get("Error"));
-        }
-
+        verifyHash( response);
         return new StatusResponse(response);
     }
 
     public final MobileInitResponse sendMobile(Payment payment, String phone, MobileMoneyMethod mMoneyMethod) {
-        if (payment.getMerchantReference().isEmpty()) {
-            throw new InvalidReferenceException();
-        }
-
-        if (payment.getTotal().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new EmptyCartException();
-        }
+        validatePayment(payment);
 
         return initMobileTransaction(payment, phone, mMoneyMethod);
     }
@@ -239,8 +246,8 @@ public class Paynow {
                 throw new IllegalArgumentException("Auth email is required for mobile transactions. Please pass a valid email address to the createPayment method");
             }
 
-            HashMap<String, String> response = UrlParser.parseQueryString(
-                    httpPaynowHttpClient.postAsync(PaynowUrls.INITIATE_MOBILE_TRANSACTION, data)
+            HashMap<String, String> response = UrlParser.parseMapFromQueryString(
+                    httpHttpClient.postAsync(PaynowUrls.INITIATE_MOBILE_TRANSACTION, data)
             );
 
             if (!response.get("status").equalsIgnoreCase("error") && (!response.containsKey("hash") || !HashGenerator.verify(response, integrationKey))) {
@@ -264,14 +271,13 @@ public class Paynow {
         try {
             HashMap<String, String> data = formatInitWebTransactionRequest(payment);
 
-            HashMap<String, String> response = UrlParser.parseQueryString(
-                    httpPaynowHttpClient.postAsync(PaynowUrls.INITIATE_TRANSACTION, data)
+            HashMap<String, String> response = UrlParser.parseMapFromQueryString(
+                    httpHttpClient.postAsync(PaynowUrls.INITIATE_TRANSACTION, data)
             );
 
-            if (response.get("status").equalsIgnoreCase("error") || !response.containsKey("hash") || !HashGenerator.verify(response, integrationKey)) {
+            if (!response.get("status").equalsIgnoreCase("error") && (!response.containsKey("hash") || !HashGenerator.verify(response, integrationKey))) {
                 throw new HashMismatchException(response.get("Error"));
             }
-
 
             return new WebInitResponse(response);
         } catch (IOException ex) {
@@ -346,8 +352,12 @@ public class Paynow {
         return integrationKey;
     }
 
-    protected PaynowHttpClient getHttpPaynowHttpClient() {
-        return httpPaynowHttpClient;
+    protected HttpClient getHttpHttpClient() {
+        return httpHttpClient;
+    }
+
+    public void setHttpHttpClient(HttpClient httpHttpClient) {
+        this.httpHttpClient = httpHttpClient;
     }
     //END OF GETTER AND SETTER METHODS
 
