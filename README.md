@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/tzifudzi/Paynow-Java-SDK/branch/master/graph/badge.svg)](https://codecov.io/gh/tzifudzi/Paynow-Java-SDK)
+
 # Java SDK for Zimbabwe's leading payment gateway, Paynow
 
 This repository contains the official Paynow SDK for use with Java. For more details on the Paynow API, have a look at the official documentation at the [Paynow Developer Hub](https://developers.paynow.co.zw/), or [download](https://www.paynow.co.zw/Content/Paynow%203rd%20Party%20Site%20and%20Link%20Integration%20Documentation.pdf) the PDF version of the documentation.
