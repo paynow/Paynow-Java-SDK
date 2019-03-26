@@ -68,6 +68,7 @@ public class Payment {
      *
      * @param title  The name of the item
      * @param amount The cost of the item
+     * @return Returns payment object with cart item added
      */
     public final Payment add(String title, double amount) {
         cart.put(title, new BigDecimal(amount));
@@ -79,6 +80,7 @@ public class Payment {
      *
      * @param title  The name of the item
      * @param amount The cost of the item
+     * @return Returns payment object with cart item added
      */
     public final Payment add(String title, int amount) {
         cart.put(title, new BigDecimal(amount));
@@ -91,6 +93,7 @@ public class Payment {
      *
      * @param title  The name of the item
      * @param amount The cost of the item
+     * @return Returns payment object with cart item added
      */
     public final Payment add(String title, BigDecimal amount) {
         cart.put(title, amount);
@@ -102,6 +105,7 @@ public class Payment {
      * Removes an item from the cart
      *
      * @param title The name of the item
+     * @return Returns payment object with cart item removed
      */
     public final Payment remove(String title) {
         HashMap<String, BigDecimal> items = cart;
@@ -115,6 +119,7 @@ public class Payment {
 
     /**
      * Calculate the total amount of the cart in the cart for the transaction
+     * @return Returns total calculated from cart
      */
     protected BigDecimal calculateTotal() {
         return PaymentParser.addCollectionValues(cart).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -152,6 +157,7 @@ public class Payment {
 
     /**
      * Get the total amount of the items in the cart for the transaction
+     * @return Returns total calculated from cart
      */
     public final BigDecimal getTotal() {
         return calculateTotal();

@@ -130,8 +130,8 @@ public class Paynow {
      * Requires reference, cart, and authEmail. Can be used for mobile transactions.
      *
      * @param merchantReference Unique transaction’s reference on the merchant site
-     * @param cart
-     * @param authEmail
+     * @param cart              List of items in the cart
+     * @param authEmail             E-mail address of the user making the payment
      * @return New 'Payment' instance associated with reference
      */
     public final Payment createPayment(String merchantReference, HashMap<String, BigDecimal> cart, String authEmail) {

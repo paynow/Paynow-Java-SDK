@@ -20,6 +20,7 @@ public class HttpClient {
      *
      * @param url The url to send post request to
      * @return The response body from the request
+     * @throws IOException Thrown if eception occurs during network communication
      */
     public String postAsync(String url) throws IOException {
         return postAsync(url, null);
@@ -31,6 +32,7 @@ public class HttpClient {
      * @param url  The url to send post request to
      * @param data The data to send in the post request body
      * @return The response body from the request
+     * @throws IOException Thrown if eception occurs during network communication
      */
     public String postAsync(String url, HashMap<String, String> data) throws IOException {
 
