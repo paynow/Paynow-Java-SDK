@@ -1,12 +1,12 @@
 # Java SDK for Paynow API
 
-## Prerequisites
-
-In order to make use of this project, the following prerequisites must be met for it to work.
-
 ## Sign in to Paynow and get integration details
 
 > Before you can start making requests to Paynow's API, you need to get an integration ID and integration Key from Paynow. Details about how you can retrieve the ID and key are explained in detail on [this page](generation.md)
+
+## Prerequisites
+
+In order to make use of this project, the following prerequisites must be met for it to work.
 
 1. Java JDK 7 or higher
 
