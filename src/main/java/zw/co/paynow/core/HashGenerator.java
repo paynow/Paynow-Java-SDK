@@ -27,6 +27,23 @@ public final class HashGenerator {
     }
 
     /**
+     * Convert binary data to it's hex representation
+     * 
+     * @param data The binary data to convert to hex
+     *
+     * @return The hex value of the data
+     */ 
+    public static String toHex(byte[] data) {
+        char[] chars = new char[data.length * 2];
+        
+        for (int i = 0; i < data.length; i++) {
+            chars[i * 2] = HEX_DIGITS[(data[i] >> 4) & 0xf];
+            chars[i * 2 + 1] = HEX_DIGITS[data[i] & 0xf];
+        }
+        return new String(chars);
+    }
+    
+    /**
      * Generate a SHA512 hash of the given string
      *
      * @param input The string to hash
@@ -41,7 +58,7 @@ public final class HashGenerator {
             digest.reset();
             digest.update(input.getBytes(StandardCharsets.UTF_8));
 
-            hash = String.format("%040x", new BigInteger(1, digest.digest()));
+            hash = toHex(digest.digest());
 
             return hash.toUpperCase();
 
@@ -81,4 +98,5 @@ public final class HashGenerator {
         return make(data, integrationKey).equalsIgnoreCase(data.get("hash"));
     }
 
+    private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
 }
