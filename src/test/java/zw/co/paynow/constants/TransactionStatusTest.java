@@ -1,99 +1,102 @@
 package zw.co.paynow.constants;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class TransactionStatusTest {
+@DisplayName("Transaction Status Test")
+class TransactionStatusTest {
 
     @Test
-    public void GetResponseString_CurrentConstantValuesSet_ResponseStringReturnsCorrectValue() {
-        assertTrue("OK".equalsIgnoreCase(TransactionStatus.OK.getResponseString()));
-        assertTrue("PAID".equalsIgnoreCase(TransactionStatus.PAID.getResponseString()));
-        assertTrue("CANCELLED".equalsIgnoreCase(TransactionStatus.CANCELLED.getResponseString()));
-        assertTrue("SENT".equalsIgnoreCase(TransactionStatus.SENT.getResponseString()));
-        assertTrue("AWAITING DELIVERY".equalsIgnoreCase(TransactionStatus.DELIVERY.getResponseString()));
-        assertTrue("DISPUTED".equalsIgnoreCase(TransactionStatus.DISPUTED.getResponseString()));
-        assertTrue("REFUNDED".equalsIgnoreCase(TransactionStatus.REFUNDED.getResponseString()));
-        assertTrue("DELIVERED".equalsIgnoreCase(TransactionStatus.DELIVERED.getResponseString()));
-        assertTrue("ERROR".equalsIgnoreCase(TransactionStatus.ERROR.getResponseString()));
-        assertTrue("CREATED".equalsIgnoreCase(TransactionStatus.CREATED.getResponseString()));
-        assertTrue("INVALID ID.".equalsIgnoreCase(TransactionStatus.INVALID_ID.getResponseString()));
+    @DisplayName("Get Response String Current Constant Values Set Response String Returns Correct Value")
+    void GetResponseString_CurrentConstantValuesSet_ResponseStringReturnsCorrectValue() {
+        assertThat(TransactionStatus.OK.getResponseString()).isEqualToIgnoringCase("OK");
+        assertThat(TransactionStatus.PAID.getResponseString()).isEqualToIgnoringCase("PAID");
+        assertThat(TransactionStatus.CANCELLED.getResponseString()).isEqualToIgnoringCase("CANCELLED");
+        assertThat(TransactionStatus.SENT.getResponseString()).isEqualToIgnoringCase("SENT");
+        assertThat(TransactionStatus.DELIVERY.getResponseString()).isEqualToIgnoringCase("AWAITING DELIVERY");
+        assertThat(TransactionStatus.DISPUTED.getResponseString()).isEqualToIgnoringCase("DISPUTED");
+        assertThat(TransactionStatus.REFUNDED.getResponseString()).isEqualToIgnoringCase("REFUNDED");
+        assertThat(TransactionStatus.DELIVERED.getResponseString()).isEqualToIgnoringCase("DELIVERED");
+        assertThat(TransactionStatus.ERROR.getResponseString()).isEqualToIgnoringCase("ERROR");
+        assertThat(TransactionStatus.CREATED.getResponseString()).isEqualToIgnoringCase("CREATED");
+        assertThat(TransactionStatus.INVALID_ID.getResponseString()).isEqualToIgnoringCase("INVALID ID.");
     }
 
     @Test
-    public void GetTransactionStatus_SampleExpectedString_ReturnsCorrectStatusEnum() {
+    @DisplayName("Get Transaction Status Sample Expected String Returns Correct Status Enum")
+    void GetTransactionStatus_SampleExpectedString_ReturnsCorrectStatusEnum() {
         TransactionStatus transactionStatusOk = TransactionStatus.getTransactionStatus("Ok");
-        assertEquals(TransactionStatus.OK, transactionStatusOk);
+        assertThat(transactionStatusOk).isEqualTo(TransactionStatus.OK);
 
         TransactionStatus transactionStatusPaid = TransactionStatus.getTransactionStatus("PAID");
-        assertEquals(TransactionStatus.PAID, transactionStatusPaid);
+        assertThat(transactionStatusPaid).isEqualTo(TransactionStatus.PAID);
 
         TransactionStatus transactionStatusCancelled = TransactionStatus.getTransactionStatus("CANCELLED");
-        assertEquals(TransactionStatus.CANCELLED, transactionStatusCancelled);
+        assertThat(transactionStatusCancelled).isEqualTo(TransactionStatus.CANCELLED);
 
         TransactionStatus transactionStatusSent = TransactionStatus.getTransactionStatus("SENT");
-        assertEquals(TransactionStatus.SENT, transactionStatusSent);
+        assertThat(transactionStatusSent).isEqualTo(TransactionStatus.SENT);
 
         TransactionStatus transactionStatusDelivery = TransactionStatus.getTransactionStatus("AWAITING DELIVERY");
-        assertEquals(TransactionStatus.DELIVERY, transactionStatusDelivery);
+        assertThat(transactionStatusDelivery).isEqualTo(TransactionStatus.DELIVERY);
 
         TransactionStatus transactionStatusDisputed = TransactionStatus.getTransactionStatus("DISPUTED");
-        assertEquals(TransactionStatus.DISPUTED, transactionStatusDisputed);
+        assertThat(transactionStatusDisputed).isEqualTo(TransactionStatus.DISPUTED);
 
         TransactionStatus transactionStatusRefunded = TransactionStatus.getTransactionStatus("REFUNDED");
-        assertEquals(TransactionStatus.REFUNDED, transactionStatusRefunded);
+        assertThat(transactionStatusRefunded).isEqualTo(TransactionStatus.REFUNDED);
 
         TransactionStatus transactionStatusDelivered = TransactionStatus.getTransactionStatus("DELIVERED");
-        assertEquals(TransactionStatus.DELIVERED, transactionStatusDelivered);
+        assertThat(transactionStatusDelivered).isEqualTo(TransactionStatus.DELIVERED);
 
         TransactionStatus transactionStatusError = TransactionStatus.getTransactionStatus("ERROR");
-        assertEquals(TransactionStatus.ERROR, transactionStatusError);
+        assertThat(transactionStatusError).isEqualTo(TransactionStatus.ERROR);
 
         TransactionStatus transactionStatusCreated = TransactionStatus.getTransactionStatus("CREATED");
-        assertEquals(TransactionStatus.CREATED, transactionStatusCreated);
+        assertThat(transactionStatusCreated).isEqualTo(TransactionStatus.CREATED);
 
         TransactionStatus transactionStatusInvalidId = TransactionStatus.getTransactionStatus("INVALID ID.");
-        assertEquals(TransactionStatus.INVALID_ID, transactionStatusInvalidId);
-
+        assertThat(transactionStatusInvalidId).isEqualTo(TransactionStatus.INVALID_ID);
     }
 
     @Test
-    public void GetTransactionStatus_SampleNonExistentString_ReturnsUndefinedStatusEnum() {
+    @DisplayName("Get Transaction Status Sample Non Existent String Returns Undefined Status Enum")
+    void GetTransactionStatus_SampleNonExistentString_ReturnsUndefinedStatusEnum() {
         TransactionStatus transactionStatusInvalidId = TransactionStatus.getTransactionStatus("Some random text");
-        assertEquals(TransactionStatus.UNDEFINED, transactionStatusInvalidId);
+        assertThat(transactionStatusInvalidId).isEqualTo(TransactionStatus.UNDEFINED);
     }
 
     @Test
-    public void GetDescription_CurrentConstantValuesSet_DescriptionIsNotNull() {
-        assertThat(TransactionStatus.OK.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.PAID.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.CANCELLED.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.ERROR.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.DELIVERED.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.REFUNDED.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.DISPUTED.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.DELIVERY.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.SENT.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.CREATED.getDescription(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.INVALID_ID.getDescription(), not(isEmptyOrNullString()));
+    @DisplayName("Get Description Current Constant Values Set Description Is Not Null")
+    void GetDescription_CurrentConstantValuesSet_DescriptionIsNotNull() {
+        assertThat(TransactionStatus.OK.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.PAID.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.CANCELLED.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.ERROR.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.DELIVERED.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.REFUNDED.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.DISPUTED.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.DELIVERY.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.SENT.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.CREATED.getDescription()).isNotEmpty();
+        assertThat(TransactionStatus.INVALID_ID.getDescription()).isNotEmpty();
     }
 
     @Test
-    public void ToString_CurrentConstantValuesSet_ToStringIsNotNullOrEmpty() {
-        assertThat(TransactionStatus.OK.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.PAID.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.CANCELLED.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.ERROR.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.DELIVERED.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.REFUNDED.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.DISPUTED.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.DELIVERY.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.SENT.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.CREATED.toString(), not(isEmptyOrNullString()));
-        assertThat(TransactionStatus.INVALID_ID.toString(), not(isEmptyOrNullString()));
+    @DisplayName("To String Current Constant Values Set To String Is Not Null Or Empty")
+    void ToString_CurrentConstantValuesSet_ToStringIsNotNullOrEmpty() {
+        assertThat(TransactionStatus.OK.toString()).isNotEmpty();
+        assertThat(TransactionStatus.PAID.toString()).isNotEmpty();
+        assertThat(TransactionStatus.CANCELLED.toString()).isNotEmpty();
+        assertThat(TransactionStatus.ERROR.toString()).isNotEmpty();
+        assertThat(TransactionStatus.DELIVERED.toString()).isNotEmpty();
+        assertThat(TransactionStatus.REFUNDED.toString()).isNotEmpty();
+        assertThat(TransactionStatus.DISPUTED.toString()).isNotEmpty();
+        assertThat(TransactionStatus.DELIVERY.toString()).isNotEmpty();
+        assertThat(TransactionStatus.SENT.toString()).isNotEmpty();
+        assertThat(TransactionStatus.CREATED.toString()).isNotEmpty();
+        assertThat(TransactionStatus.INVALID_ID.toString()).isNotEmpty();
     }
-
 }

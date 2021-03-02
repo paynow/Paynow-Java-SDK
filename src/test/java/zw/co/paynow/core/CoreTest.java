@@ -1,11 +1,12 @@
 package zw.co.paynow.core;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import zw.co.paynow.constants.MobileMoneyMethod;
 import zw.co.paynow.constants.PaynowUrls;
 import zw.co.paynow.constants.TransactionStatus;
@@ -25,14 +26,13 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CoreTest {
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Core Test")
+class CoreTest {
 
     private static String integrationKey;
     private static String integrationId;
@@ -46,8 +46,8 @@ public class CoreTest {
     @Mock
     private HttpClient httpClient;
 
-    @BeforeClass
-    public static void setup() {
+    @BeforeAll
+    static void setup() {
         integrationKey = "0123456789";
         integrationId = "9876543210";
         resultUrl = "www.example.org/resultUrl";
@@ -55,8 +55,8 @@ public class CoreTest {
         dummyMobile = "0771222333";
     }
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         paynow = new Paynow(integrationId, integrationKey, resultUrl);
         paynow.setHttpHttpClient(httpClient);
 
@@ -73,133 +73,145 @@ public class CoreTest {
     }
 
     @Test
-    public void CreatePaymentMethods_ValidParams_PaymentObjectWithCorrectFieldValues() {
-
+    @DisplayName("Create Payment Methods Valid Params Payment Object With Correct Field Values")
+    void CreatePaymentMethods_ValidParams_PaymentObjectWithCorrectFieldValues() {
         Payment payment1 = paynow.createPayment("1");
-        assertEquals("1", payment1.getMerchantReference());
-        assertThat(payment1.getCart(), not(nullValue()));
-        assertEquals(0, payment1.getCart().size());
-        assertEquals("", payment1.getAuthEmail());
-
+        assertThat(payment1.getMerchantReference()).isEqualTo("1");
+        assertThat(payment1.getCart()).isNotNull();
+        assertThat(payment1.getCart().size()).isZero();
+        assertThat(payment1.getAuthEmail()).isEmpty();
         Payment payment2 = paynow.createPayment("1", dummyEmail);
-        assertEquals("1", payment2.getMerchantReference());
-        assertEquals(dummyEmail, payment2.getAuthEmail());
-        assertThat(payment2.getCart(), not(nullValue()));
-        assertEquals(0, payment2.getCart().size());
+        assertThat(payment2.getMerchantReference()).isEqualTo("1");
+        assertThat(payment2.getAuthEmail()).isEqualTo(dummyEmail);
+        assertThat(payment2.getCart()).isNotNull();
+        assertThat(payment2.getCart().size()).isZero();
 
         Payment payment3 = paynow.createPayment("1", dummyCart);
-        assertEquals("1", payment3.getMerchantReference());
-        assertThat(payment3.getCart(), not(nullValue()));
-        assertEquals(dummyCart, payment3.getCart());
-        assertEquals(dummyCart.size(), payment3.getCart().size());
-        assertEquals("", payment3.getAuthEmail());
-
+        assertThat(payment3.getMerchantReference()).isEqualTo("1");
+        assertThat(payment3.getCart()).isNotNull();
+        assertThat(payment3.getCart()).isEqualTo(dummyCart);
+        assertThat(payment3.getCart().size()).isEqualTo(dummyCart.size());
+        assertThat(payment3.getAuthEmail()).isEmpty();
         Payment payment4 = paynow.createPayment("1", dummyCart, dummyEmail);
-        assertEquals("1", payment4.getMerchantReference());
-        assertThat(payment4.getCart(), not(nullValue()));
-        assertEquals(dummyCart, payment4.getCart());
-        assertEquals(dummyCart.size(), payment4.getCart().size());
-        assertEquals(dummyEmail, payment4.getAuthEmail());
-
+        assertThat(payment4.getMerchantReference()).isEqualTo("1");
+        assertThat(payment4.getCart()).isNotNull();
+        assertThat(payment4.getCart()).isEqualTo(dummyCart);
+        assertThat(payment4.getCart().size()).isEqualTo(dummyCart.size());
+        assertThat(payment4.getAuthEmail()).isEqualTo(dummyEmail);
     }
 
-    @Test(expected = InvalidReferenceException.class)
-    public void CreatePaymentForWeb_PaymentWithEmptyReference_ExceptionThrown() {
-
+    @Test
+    @DisplayName("Create Payment For Web Payment With Empty Reference Exception Thrown")
+    void CreatePaymentForWeb_PaymentWithEmptyReference_ExceptionThrown() {
         dummyPayment = paynow.createPayment("", dummyEmail);
 
-        paynow.send(dummyPayment);
-
+        assertThrows(InvalidReferenceException.class, () -> paynow.send(dummyPayment));
     }
 
-    @Test(expected = InvalidReferenceException.class)
-    public void CreatePaymentForMobile_PaymentWithEmptyReference_ExceptionThrown() {
-
+    @Test
+    @DisplayName("Create Payment For Mobile Payment With Empty Reference Exception Thrown")
+    void CreatePaymentForMobile_PaymentWithEmptyReference_ExceptionThrown() {
         dummyPayment = paynow.createPayment("", dummyEmail);
 
-        paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
-
+        assertThrows(InvalidReferenceException.class, () -> paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void SendMobile_PaymentWithNoEmail_ExceptionThrown() {
+    @Test
+    @DisplayName("Send Mobile Payment With No Email Exception Thrown")
+    void SendMobile_PaymentWithNoEmail_ExceptionThrown() {
         dummyPayment = paynow.createPayment("1", "");
         dummyPayment.add("Bananas", new BigDecimal(1));
-        paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
+
+        assertThrows(IllegalArgumentException.class, () -> paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void SendMobile_PaymentWithBadEmail_ExceptionThrown() {
+    @Test
+    @DisplayName("Send Mobile Payment With Bad Email Exception Thrown")
+    void SendMobile_PaymentWithBadEmail_ExceptionThrown() {
         dummyPayment = paynow.createPayment("1", "bad@email");
         dummyPayment.add("Bananas", new BigDecimal(1));
-        paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
+
+        assertThrows(IllegalArgumentException.class, () -> paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void SendMobile_PaymentWithNullEmail_ExceptionThrown() {
+    @Test
+    @DisplayName("Send Mobile Payment With Null Email Exception Thrown")
+    void SendMobile_PaymentWithNullEmail_ExceptionThrown() {
         String nullString = null;
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         dummyPayment = paynow.createPayment("1", nullString);
         dummyPayment.add("Bananas", new BigDecimal(1));
-        paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
+
+        assertThrows(IllegalArgumentException.class, () -> paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH));
     }
 
     @Test
-    public void ParseStatusWithStringAsArg_ValidResponseString_ParseStatusWithCorrectFieldValues() {
-
+    @DisplayName("Parse Status With String As Arg Valid Response String Parse Status With Correct Field Values")
+    void ParseStatusWithStringAsArg_ValidResponseString_ParseStatusWithCorrectFieldValues() {
         String rawResponse = "reference=Invoice+32&paynowreference=1234567&amount=3.50&status=Created&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d06f656ab-ed60-4a03-8373-a3321b4b3e68&hash=DD982F5F279A97BE50E0156742804CAFA5E658E58AC0DB4B7D91C1B45E95A3B42475F91A249DDBEB1FF2FB69D80D3FAE3DC2289649B03ADEDEDB9624D444485E";
+
         StatusResponse statusResponse = paynow.parseStatus(rawResponse);
-        assertEquals("Invoice 32", statusResponse.getMerchantReference());
-        assertEquals("1234567", statusResponse.getPaynowReference());
-        assertEquals("Invoice 32", statusResponse.getMerchantReference());
-        assertEquals(new BigDecimal(3.5), statusResponse.getAmount());
-        assertFalse(statusResponse.paid());
-        assertThat(statusResponse.getRawResponseContent(), not(nullValue()));
-        assertEquals(6, statusResponse.getRawResponseContent().size());
-        assertEquals(UrlParser.parseMapFromQueryString(rawResponse), statusResponse.getRawResponseContent());
+
+        assertThat(statusResponse.getMerchantReference()).isEqualTo("Invoice 32");
+        assertThat(statusResponse.getPaynowReference()).isEqualTo("1234567");
+        assertThat(statusResponse.getMerchantReference()).isEqualTo("Invoice 32");
+        assertThat(statusResponse.getAmount()).isEqualTo(new BigDecimal("3.5"));
+        assertThat(statusResponse.paid()).isFalse();
+        assertThat(statusResponse.getRawResponseContent()).isNotNull();
+        assertThat(statusResponse.getRawResponseContent()).hasSize(6);
+        assertThat(statusResponse.getRawResponseContent()).isEqualTo(UrlParser.parseMapFromQueryString(rawResponse));
 
     }
 
     @Test
-    public void ParseStatusWithMapAsArg_ValidResponseString_ParseStatusWithCorrectFieldValues() {
-
+    @DisplayName("Parse Status With Map As Arg Valid Response String Parse Status With Correct Field Values")
+    void ParseStatusWithMapAsArg_ValidResponseString_ParseStatusWithCorrectFieldValues() {
         String rawResponse = "reference=Invoice+32&paynowreference=1234567&amount=3.50&status=Created&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d06f656ab-ed60-4a03-8373-a3321b4b3e68&hash=DD982F5F279A97BE50E0156742804CAFA5E658E58AC0DB4B7D91C1B45E95A3B42475F91A249DDBEB1FF2FB69D80D3FAE3DC2289649B03ADEDEDB9624D444485E";
+
         HashMap<String, String> mapResponse = UrlParser.parseMapFromQueryString(rawResponse);
+
         StatusResponse statusResponse = paynow.parseStatus(mapResponse);
-        assertEquals("Invoice 32", statusResponse.getMerchantReference());
-        assertEquals("1234567", statusResponse.getPaynowReference());
-        assertEquals("Invoice 32", statusResponse.getMerchantReference());
-        assertEquals(new BigDecimal(3.5), statusResponse.getAmount());
-        assertFalse(statusResponse.paid());
-        assertThat(statusResponse.getRawResponseContent(), not(nullValue()));
-        assertEquals(6, statusResponse.getRawResponseContent().size());
-        assertEquals(UrlParser.parseMapFromQueryString(rawResponse), statusResponse.getRawResponseContent());
-
-    }
-
-    @Test(expected = HashMismatchException.class)
-    public void ParseStatusWithMapAsArg_BadHash_ExceptionThrown() {
-        String rawResponse = "reference=Invoice+32&paynowreference=1234567&amount=3.50&status=Created&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d06f656ab-ed60-4a03-8373-a3321b4b3e68&hash=WrongHash";
-        HashMap<String, String> mapResponse = UrlParser.parseMapFromQueryString(rawResponse);
-        paynow.parseStatus(mapResponse);
-    }
-
-    @Test(expected = HashMismatchException.class)
-    public void ParseStatusWithMapAsArg_NoHashEntryInMap_ExceptionThrown() {
-        String rawResponse = "reference=Invoice+32&paynowreference=1234567&amount=3.50&status=Created&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d06f656ab-ed60-4a03-8373-a3321b4b3e68";
-        HashMap<String, String> mapResponse = UrlParser.parseMapFromQueryString(rawResponse);
-        paynow.parseStatus(mapResponse);
-    }
-
-    @Test(expected = HashMismatchException.class)
-    public void ParseStatusWithStringAsArg_NoHashEntryInMap_ExceptionThrown() {
-        String rawResponse = "reference=Invoice+32&paynowreference=1234567&amount=3.50&status=Created&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d06f656ab-ed60-4a03-8373-a3321b4b3e68&hash=WrongHash";
-        paynow.parseStatus(rawResponse);
+        assertThat(statusResponse.getMerchantReference()).isEqualTo("Invoice 32");
+        assertThat(statusResponse.getPaynowReference()).isEqualTo("1234567");
+        assertThat(statusResponse.getMerchantReference()).isEqualTo("Invoice 32");
+        assertThat(statusResponse.getAmount()).isEqualTo(new BigDecimal("3.5"));
+        assertThat(statusResponse.paid()).isFalse();
+        assertThat(statusResponse.getRawResponseContent()).isNotNull();
+        assertThat(statusResponse.getRawResponseContent()).hasSize(6);
+        assertThat(statusResponse.getRawResponseContent()).isEqualTo(UrlParser.parseMapFromQueryString(rawResponse));
     }
 
     @Test
-    public void SendForWeb_CorrectAndValidPaymentObj_ResponseIsReturnedWithCorrectValues() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    @DisplayName("Parse Status With Map As Arg Bad Hash Exception Thrown")
+    void ParseStatusWithMapAsArg_BadHash_ExceptionThrown() {
+        String rawResponse = "reference=Invoice+32&paynowreference=1234567&amount=3.50&status=Created&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d06f656ab-ed60-4a03-8373-a3321b4b3e68&hash=WrongHash";
 
+        HashMap<String, String> mapResponse = UrlParser.parseMapFromQueryString(rawResponse);
+
+        assertThrows(HashMismatchException.class, () -> paynow.parseStatus(mapResponse));
+    }
+
+    @Test
+    @DisplayName("Parse Status With Map As Arg No Hash Entry In Map Exception Thrown")
+    void ParseStatusWithMapAsArg_NoHashEntryInMap_ExceptionThrown() {
+        String rawResponse = "reference=Invoice+32&paynowreference=1234567&amount=3.50&status=Created&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d06f656ab-ed60-4a03-8373-a3321b4b3e68";
+
+        HashMap<String, String> mapResponse = UrlParser.parseMapFromQueryString(rawResponse);
+
+        assertThrows(HashMismatchException.class, () -> paynow.parseStatus(mapResponse));
+    }
+
+    @Test
+    @DisplayName("Parse Status With String As Arg No Hash Entry In Map Exception Thrown")
+    void ParseStatusWithStringAsArg_NoHashEntryInMap_ExceptionThrown() {
+        String rawResponse = "reference=Invoice+32&paynowreference=1234567&amount=3.50&status=Created&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d06f656ab-ed60-4a03-8373-a3321b4b3e68&hash=WrongHash";
+
+        assertThrows(HashMismatchException.class, () -> paynow.parseStatus(rawResponse));
+    }
+
+    @Test
+    @DisplayName("Send For Web Correct And Valid Payment Obj Response Is Returned With Correct Values")
+    void SendForWeb_CorrectAndValidPaymentObj_ResponseIsReturnedWithCorrectValues() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         String rawResponse = "status=Ok&browserurl=https%3a%2f%2fwww.paynow.co.zw%2fPayment%2fConfirmPayment%2f2638504%2ftmoyo%40yahoo.com%2f%2f&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d09471727-37a6-4a0c-a7f3-c1ac48f79431&hash=CDC4027ED4E94CEF5B95DCC3A86A2BC071E0BDFD6C8B8E5323B8F93DD260CC0EC4195815985FCB767DDD2384E7F1AA331159E137928005A372B97D5CFA4562C7";
 
         //Access private method using reflection
@@ -213,18 +225,18 @@ public class CoreTest {
 
         verify(httpClient, times(1)).postAsync(PaynowUrls.INITIATE_TRANSACTION, data);
 
-        assertEquals(TransactionStatus.OK, response.getStatus());
-        assertTrue(response.success());
-        assertEquals(0, response.getErrors().size());
-        assertThat(response.getHash(), not(isEmptyOrNullString()));
-        assertThat(response.getRedirectURL(), not(isEmptyOrNullString()));
-        assertThat(response.getPollUrl(), not(isEmptyOrNullString()));
+        assertThat(response.getStatus()).isEqualTo(TransactionStatus.OK);
+        assertThat(response.success()).isTrue();
+        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getHash()).isNotEmpty();
+        assertThat(response.getRedirectURL()).isNotEmpty();
+        assertThat(response.getPollUrl()).isNotEmpty();
 
     }
 
     @Test
-    public void SendForMobile_CorrectAndValidPaymentObj_ResponseIsReturnedWithCorrectValues() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
+    @DisplayName("Send For Mobile Correct And Valid Payment Obj Response Is Returned With Correct Values")
+    void SendForMobile_CorrectAndValidPaymentObj_ResponseIsReturnedWithCorrectValues() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         String rawResponse = "status=Ok&paynowreference=0123456&instructions=Some_random_instructions&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d09471727-37a6-4a0c-a7f3-c1ac48f79431&hash=DB191C4CDE56138E11A398CA6AB1E1FC5DEEA870FFDDE4557F2A8994EFF8BA284C5318BC2213AA65449B5565AC6FC6A164554E5463EDF0164D149A0E0D24AB8E";
 
         //Access private method using reflection
@@ -238,19 +250,18 @@ public class CoreTest {
 
         verify(httpClient, times(1)).postAsync(PaynowUrls.INITIATE_MOBILE_TRANSACTION, data);
 
-        assertEquals(TransactionStatus.OK, response.getStatus());
-        assertTrue(response.success());
-        assertEquals(0, response.getErrors().size());
-        assertEquals("0123456", response.getPaynowReference());
-        assertThat(response.getHash(), not(isEmptyOrNullString()));
-        assertThat(response.getInstructions(), not(isEmptyOrNullString()));
-        assertThat(response.getPollUrl(), not(isEmptyOrNullString()));
-
+        assertThat(response.getStatus()).isEqualTo(TransactionStatus.OK);
+        assertThat(response.success()).isTrue();
+        assertThat(response.getErrors()).isEmpty();
+        assertThat(response.getPaynowReference()).isEqualTo("0123456");
+        assertThat(response.getHash()).isNotEmpty();
+        assertThat(response.getInstructions()).isNotEmpty();
+        assertThat(response.getPollUrl()).isNotEmpty();
     }
 
     @Test
-    public void PollTransaction_ValidResponseString_ResponseIsReturnedWithCorrectValues() throws IOException {
-
+    @DisplayName("Poll Transaction Valid Response String Response Is Returned With Correct Values")
+    void PollTransaction_ValidResponseString_ResponseIsReturnedWithCorrectValues() throws IOException {
         String rawResponse = "reference=Invoice+32&paynowreference=1234567&amount=3.50&status=Created&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d06f656ab-ed60-4a03-8373-a3321b4b3e68&hash=DD982F5F279A97BE50E0156742804CAFA5E658E58AC0DB4B7D91C1B45E95A3B42475F91A249DDBEB1FF2FB69D80D3FAE3DC2289649B03ADEDEDB9624D444485E";
         String pollUrl = "www.dummypollurl.co.zw";
 
@@ -259,113 +270,109 @@ public class CoreTest {
         StatusResponse statusResponse = paynow.pollTransaction(pollUrl);
 
         verify(httpClient, times(1)).postAsync(pollUrl, null);
-
-        assertEquals("Invoice 32", statusResponse.getMerchantReference());
-        assertEquals("1234567", statusResponse.getPaynowReference());
-        assertEquals("Invoice 32", statusResponse.getMerchantReference());
-        assertEquals(new BigDecimal(3.5), statusResponse.getAmount());
-        assertFalse(statusResponse.paid());
-        assertThat(statusResponse.getRawResponseContent(), not(nullValue()));
-        assertEquals(6, statusResponse.getRawResponseContent().size());
-        assertEquals(UrlParser.parseMapFromQueryString(rawResponse), statusResponse.getRawResponseContent());
-
+        assertThat(statusResponse.getMerchantReference()).isEqualTo("Invoice 32");
+        assertThat(statusResponse.getPaynowReference()).isEqualTo("1234567");
+        assertThat(statusResponse.getMerchantReference()).isEqualTo("Invoice 32");
+        assertThat(statusResponse.getAmount()).isEqualTo(new BigDecimal("3.5"));
+        assertThat(statusResponse.paid()).isFalse();
+        assertThat(statusResponse.getRawResponseContent()).isNotNull();
+        assertThat(statusResponse.getRawResponseContent()).hasSize(6);
+        assertThat(statusResponse.getRawResponseContent()).isEqualTo(UrlParser.parseMapFromQueryString(rawResponse));
     }
 
-    @Test(expected = HashMismatchException.class)
-    public void SendForWeb_PaymentObjWithBadHash_ExceptionIsThrown() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
+    @Test
+    @DisplayName("Send For Web Payment Obj With Bad Hash Exception Is Thrown")
+    void SendForWeb_PaymentObjWithBadHash_ExceptionIsThrown() throws Exception {
         String rawResponse = "status=Ok&browserurl=https%3a%2f%2fwww.paynow.co.zw%2fPayment%2fConfirmPayment%2f2638504%2ftmoyo%40yahoo.com%2f%2f&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d09471727-37a6-4a0c-a7f3-c1ac48f79431&hash=Wronghash";
 
-        //Access private method using reflection
+        // Access private method using reflection
         Method privateMethod = paynow.getClass().getDeclaredMethod("formatInitWebTransactionRequest", Payment.class);
         privateMethod.setAccessible(true);
-        @SuppressWarnings("unchecked") HashMap<String, String> data = (HashMap<String, String>) privateMethod.invoke(paynow, dummyPayment);
-
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> data = (HashMap<String, String>) privateMethod.invoke(paynow, dummyPayment);
         when(httpClient.postAsync(PaynowUrls.INITIATE_TRANSACTION, data)).thenReturn(rawResponse);
 
-        paynow.send(dummyPayment);
-
+        assertThrows(HashMismatchException.class, () -> paynow.send(dummyPayment));
     }
 
-    @Test(expected = HashMismatchException.class)
-    public void SendForMobile_PaymentObjWithBadHash_ExceptionIsThrown() throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
+    @Test
+    @DisplayName("Send For Mobile Payment Obj With Bad Hash Exception Is Thrown")
+    void SendForMobile_PaymentObjWithBadHash_ExceptionIsThrown() throws Exception {
         String rawResponse = "status=Ok&paynowreference=0123456&instructions=Some_random_instructions&pollurl=https%3a%2f%2fwww.paynow.co.zw%2fInterface%2fCheckPayment%2f%3fguid%3d09471727-37a6-4a0c-a7f3-c1ac48f79431&hash=WrongHash";
 
-        //Access private method using reflection
+        // Access private method using reflection
         Method privateMethod = paynow.getClass().getDeclaredMethod("formatInitMobileTransactionRequest", Payment.class, String.class, MobileMoneyMethod.class);
         privateMethod.setAccessible(true);
-        @SuppressWarnings("unchecked") HashMap<String, String> data = (HashMap<String, String>) privateMethod.invoke(paynow, dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
-
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> data = (HashMap<String, String>) privateMethod.invoke(paynow, dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
         when(httpClient.postAsync(PaynowUrls.INITIATE_MOBILE_TRANSACTION, data)).thenReturn(rawResponse);
 
-        paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
-
+        assertThrows(HashMismatchException.class, () -> paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH));
     }
 
-    @Test(expected = ConnectionException.class)
-    public void SendForMobile_ExceptionOccursDuringExecution_ExceptionIsCaughtAndCustomExceptionIsThrown() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        //Access private method using reflection
+    @Test
+    @DisplayName("Send For Mobile Exception Occurs During Execution Exception Is Caught And Custom Exception Is Thrown")
+    void SendForMobile_ExceptionOccursDuringExecution_ExceptionIsCaughtAndCustomExceptionIsThrown() throws Exception {
+        // Access private method using reflection
         Method privateMethod = paynow.getClass().getDeclaredMethod("formatInitMobileTransactionRequest", Payment.class, String.class, MobileMoneyMethod.class);
         privateMethod.setAccessible(true);
-        @SuppressWarnings("unchecked") HashMap<String, String> data = (HashMap<String, String>) privateMethod.invoke(paynow, dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
-
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> data = (HashMap<String, String>) privateMethod.invoke(paynow, dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
         when(httpClient.postAsync(PaynowUrls.INITIATE_MOBILE_TRANSACTION, data)).thenThrow(new IOException());
 
-        paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
-
+        assertThrows(ConnectionException.class, () -> paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH));
     }
 
-    @Test(expected = ConnectionException.class)
-    public void SendForWeb_ExceptionOccursDuringExecution_ExceptionIsCaughtAndCustomExceptionIsThrown() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        //Access private method using reflection
+    @Test
+    @DisplayName("Send For Web Exception Occurs During Execution Exception Is Caught And Custom Exception Is Thrown")
+    void SendForWeb_ExceptionOccursDuringExecution_ExceptionIsCaughtAndCustomExceptionIsThrown() throws Exception {
+        // Access private method using reflection
         Method privateMethod = paynow.getClass().getDeclaredMethod("formatInitWebTransactionRequest", Payment.class);
         privateMethod.setAccessible(true);
-        @SuppressWarnings("unchecked") HashMap<String, String> data = (HashMap<String, String>) privateMethod.invoke(paynow, dummyPayment);
-
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> data = (HashMap<String, String>) privateMethod.invoke(paynow, dummyPayment);
         when(httpClient.postAsync(PaynowUrls.INITIATE_TRANSACTION, data)).thenThrow(new IOException());
 
-        paynow.send(dummyPayment);
-
-    }
-
-    @Test(expected = EmptyCartException.class)
-    public void SendForWeb_EmptyCart_ExceptionThrown() {
-        dummyPayment.getCart().clear();
-        paynow.send(dummyPayment);
-    }
-
-    @Test(expected = EmptyCartException.class)
-    public void SendForMobile_EmptyCart_ExceptionThrown() {
-        dummyPayment.getCart().clear();
-        paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH);
+        assertThrows(ConnectionException.class, () -> paynow.send(dummyPayment));
     }
 
     @Test
-    public void CalculateTotal_CartItemsSetInInit_CorrectTotal() {
+    @DisplayName("Send For Web Empty Cart Exception Thrown")
+    void SendForWeb_EmptyCart_ExceptionThrown() {
+        dummyPayment.getCart().clear();
 
+        assertThrows(EmptyCartException.class, () -> paynow.send(dummyPayment));
+    }
+
+    @Test
+    @DisplayName("Send For Mobile Empty Cart Exception Thrown")
+    void SendForMobile_EmptyCart_ExceptionThrown() {
+        dummyPayment.getCart().clear();
+
+        assertThrows(EmptyCartException.class, () -> paynow.sendMobile(dummyPayment, dummyMobile, MobileMoneyMethod.ECOCASH));
+    }
+
+    @Test
+    @DisplayName("Calculate Total Cart Items Set In Init Correct Total")
+    void CalculateTotal_CartItemsSetInInit_CorrectTotal() {
         BigDecimal total = dummyPayment.calculateTotal();
 
-        assertTrue(new BigDecimal(6).compareTo(total) == 0);
+        assertThat(total).isEqualByComparingTo(new BigDecimal(6));
 
     }
 
     @Test
-    public void ToDictionary_NoParams_CorrectValues() {
-
+    @DisplayName("To Dictionary No Params Correct Values")
+    void ToDictionary_NoParams_CorrectValues() {
         HashMap<String, String> map = dummyPayment.toDictionary();
-
-        assertEquals("", map.get("resulturl"));
-        assertEquals("", map.get("returnurl"));
-        assertEquals("1", map.get("reference"));
-        assertEquals("6.00", map.get("amount"));
-        assertEquals("", map.get("id"));
-        assertEquals("Apple, Bananas, Oranges", map.get("additionalinfo"));
-        assertEquals(dummyEmail, map.get("authemail"));
-        assertEquals("Message", map.get("status"));
-
+        assertThat(map.get("resulturl")).isEmpty();
+        assertThat(map.get("returnurl")).isEmpty();
+        assertThat(map.get("reference")).isEqualTo("1");
+        assertThat(map.get("amount")).isEqualTo("6.00");
+        assertThat(map.get("id")).isEmpty();
+        assertThat(map.get("additionalinfo")).isEqualTo("Apple, Bananas, Oranges");
+        assertThat(map.get("authemail")).isEqualTo(dummyEmail);
+        assertThat(map.get("status")).isEqualTo("Message");
     }
 
 }

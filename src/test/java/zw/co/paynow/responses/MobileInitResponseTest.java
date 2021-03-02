@@ -1,18 +1,19 @@
 package zw.co.paynow.responses;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import zw.co.paynow.constants.TransactionStatus;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class MobileInitResponseTest {
+@DisplayName("Mobile Init Response Test")
+class MobileInitResponseTest {
 
     @Test
-    public void MobileInitResponseConstructor_SampleMapAsParam_InstantiatedObjectWithCorrectValues() {
-
+    @DisplayName("Mobile Init Response Constructor Sample Map As Param Instantiated Object With Correct Values")
+    void MobileInitResponseConstructor_SampleMapAsParam_InstantiatedObjectWithCorrectValues() {
         HashMap<String, String> sampleMap = new HashMap<>();
         sampleMap.put("paynowreference", "0123456");
         sampleMap.put("instructions", "Some_random_instructions");
@@ -21,13 +22,13 @@ public class MobileInitResponseTest {
         sampleMap.put("status", "Ok");
 
         MobileInitResponse response = new MobileInitResponse(sampleMap);
-        assertEquals(TransactionStatus.OK, response.getStatus());
-        assertTrue(response.success());
-        assertEquals(0, response.getErrors().size());
-        assertEquals("0123456", response.getPaynowReference());
-        assertEquals(sampleMap.get("hash"), response.getHash());
-        assertEquals(sampleMap.get("instructions"), response.getInstructions());
-        assertEquals(sampleMap.get("pollurl"), response.getPollUrl());
+        assertThat(response.getStatus()).isEqualTo(TransactionStatus.OK);
+        assertThat(response.success()).isTrue();
+        assertThat(response.getErrors().size()).isZero();
+        assertThat(response.getPaynowReference()).isEqualTo("0123456");
+        assertThat(response.getHash()).isEqualTo(sampleMap.get("hash"));
+        assertThat(response.getInstructions()).isEqualTo(sampleMap.get("instructions"));
+        assertThat(response.getPollUrl()).isEqualTo(sampleMap.get("pollurl"));
 
     }
 
