@@ -1,15 +1,17 @@
 package zw.co.paynow.constants;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PaynowUrlsTest {
+@DisplayName("Paynow Urls Test")
+class PaynowUrlsTest {
 
     @Test
-    public void PaynowUrls_CurrentConstantValuesSet_StringsHaveCorrectValues() {
-        assertEquals("https://www.paynow.co.zw/interface/initiatetransaction", PaynowUrls.INITIATE_TRANSACTION);
-        assertEquals("https://www.paynow.co.zw/interface/remotetransaction", PaynowUrls.INITIATE_MOBILE_TRANSACTION);
+    @DisplayName("Paynow Urls Current Constant Values Set Strings Have Correct Values")
+    void PaynowUrls_CurrentConstantValuesSet_StringsHaveCorrectValues() {
+        assertThat(PaynowUrls.INITIATE_TRANSACTION).isEqualTo("https://www.paynow.co.zw/interface/initiatetransaction");
+        assertThat(PaynowUrls.INITIATE_MOBILE_TRANSACTION).isEqualTo("https://www.paynow.co.zw/interface/remotetransaction");
     }
-
 }

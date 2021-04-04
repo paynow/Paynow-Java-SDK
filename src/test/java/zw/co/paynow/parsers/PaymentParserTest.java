@@ -1,20 +1,21 @@
 package zw.co.paynow.parsers;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PaymentParserTest {
+@DisplayName("Payment Parser Test")
+class PaymentParserTest {
 
     private HashMap<String, BigDecimal> items;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         items = new HashMap<>();
         items.put("Bananas", new BigDecimal(1));
         items.put("Apple", new BigDecimal(2));
@@ -22,28 +23,30 @@ public class PaymentParserTest {
     }
 
     @Test
-    public void FlattenCollection_ItemsSetInInit_CorrectStringFromMap() {
-        assertEquals("Apple, Bananas, Oranges", PaymentParser.flattenCollection(items));
+    @DisplayName("Flatten Collection Items Set In Init Correct String From Map")
+    void FlattenCollection_ItemsSetInInit_CorrectStringFromMap() {
+        assertThat(PaymentParser.flattenCollection(items)).isEqualTo("Apple, Bananas, Oranges");
     }
 
     @Test
-    public void FlattenCollection_EmptyMap_CorrectStringFromMap() {
+    @DisplayName("Flatten Collection Empty Map Correct String From Map")
+    void FlattenCollection_EmptyMap_CorrectStringFromMap() {
         items.clear();
-        assertEquals("", PaymentParser.flattenCollection(items));
+        assertThat(PaymentParser.flattenCollection(items)).isEmpty();
     }
 
     @Test
-    public void AddCollectionValues_ItemsSetInInit_CorrectTotal() {
+    @DisplayName("Add Collection Values Items Set In Init Correct Total")
+    void AddCollectionValues_ItemsSetInInit_CorrectTotal() {
         BigDecimal total = PaymentParser.addCollectionValues(items);
-        assertTrue(new BigDecimal(6).compareTo(total) == 0);
+        assertThat(total).isEqualByComparingTo(new BigDecimal(6));
     }
 
     @Test
-    public void AddCollectionValues_EmptyMap_CorrectTotal() {
+    @DisplayName("Add Collection Values Empty Map Correct Total")
+    void AddCollectionValues_EmptyMap_CorrectTotal() {
         items.clear();
         BigDecimal total = PaymentParser.addCollectionValues(items);
-        assertTrue(new BigDecimal(0).compareTo(total) == 0);
+        assertThat(total).isEqualByComparingTo(new BigDecimal(0));
     }
-
-
 }

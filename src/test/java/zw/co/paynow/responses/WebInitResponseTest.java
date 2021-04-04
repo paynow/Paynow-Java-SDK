@@ -1,18 +1,19 @@
 package zw.co.paynow.responses;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import zw.co.paynow.constants.TransactionStatus;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class WebInitResponseTest {
+@DisplayName("Web Init Response Test")
+class WebInitResponseTest {
 
     @Test
-    public void WebInitResponseConstructor_SampleMapAsParam_InstantiatedObjectWithCorrectValues() {
-
+    @DisplayName("Web Init Response Constructor Sample Map As Param Instantiated Object With Correct Values")
+    void WebInitResponseConstructor_SampleMapAsParam_InstantiatedObjectWithCorrectValues() {
         HashMap<String, String> sampleMap = new HashMap<>();
         sampleMap.put("browserurl", "https://www.paynow.co.zw/Interface/Redirect/?guid=09471727-37a6-4a0c-a7f3-c1ac48f79431");
         sampleMap.put("pollurl", "https://www.paynow.co.zw/Interface/CheckPayment/?guid=09471727-37a6-4a0c-a7f3-c1ac48f79431");
@@ -20,12 +21,12 @@ public class WebInitResponseTest {
         sampleMap.put("status", "Ok");
 
         WebInitResponse response = new WebInitResponse(sampleMap);
-        assertEquals(TransactionStatus.OK, response.getStatus());
-        assertTrue(response.success());
-        assertEquals(0, response.getErrors().size());
-        assertEquals(sampleMap.get("hash"), response.getHash());
-        assertEquals(sampleMap.get("browserurl"), response.getRedirectURL());
-        assertEquals(sampleMap.get("pollurl"), response.getPollUrl());
+        assertThat(response.getStatus()).isEqualTo(TransactionStatus.OK);
+        assertThat(response.success()).isTrue();
+        assertThat(response.getErrors().size()).isZero();
+        assertThat(response.getHash()).isEqualTo(sampleMap.get("hash"));
+        assertThat(response.getRedirectURL()).isEqualTo(sampleMap.get("browserurl"));
+        assertThat(response.getPollUrl()).isEqualTo(sampleMap.get("pollurl"));
 
     }
 
