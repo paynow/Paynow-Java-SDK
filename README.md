@@ -2,7 +2,7 @@
 
 ## Sign in to Paynow and get integration details
 
-> Before you can start making requests to Paynow's API, you need to get an integration ID and integration Key from Paynow. Details about how you can retrieve the ID and key are explained in detail on [this page](generation.md)
+> Before you can start making requests to Paynow's API, you need to get an integration ID and integration Key from Paynow. Details about how you can retrieve the ID and key are explained in detail on [this page](https://developers.paynow.co.zw/docs/integration_generation.html)
 
 ## Prerequisites
 
