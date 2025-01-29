@@ -94,6 +94,18 @@ public class PaymentTest {
     }
 
     @Test
+    public void AddUsingStringAndString_ValidParams_CartWithOneNewEntry() {
+
+        int currentCartSize = dummyPayment.getCart().size();
+        dummyPayment.add("Coconuts", "3.2");
+
+        assertEquals(currentCartSize + 1, dummyPayment.getCart().size());
+        assertTrue(dummyPayment.getCart().containsKey("Coconuts"));
+        assertTrue(dummyPayment.getCart().get("Coconuts").compareTo(new BigDecimal("3.2")) == 0);
+
+    }
+
+    @Test
     public void Remove_ExistingCartItemAsParam_CartWithOneNewEntry() {
 
         int currentCartSize = dummyPayment.getCart().size();
