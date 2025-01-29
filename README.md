@@ -2,7 +2,7 @@
 
 ## Sign in to Paynow and get integration details
 
-> Before you can start making requests to Paynow's API, you need to get an integration ID and integration Key from Paynow. Details about how you can retrieve the ID and key are explained in detail on [this page](generation.md)
+> Before you can start making requests to Paynow's API, you need to get an integration ID and integration Key from Paynow. Details about how you can retrieve the ID and key are explained in detail on [this page](https://developers.paynow.co.zw/docs/integration_generation.html)
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ repositories {
 	mavenCentral()
 }
 dependencies {
-	implementation 'zw.co.paynow:java-sdk:1.1.0'
+	implementation 'zw.co.paynow:java-sdk:1.1.1'
 }
 ```
 
@@ -28,7 +28,7 @@ dependencies {
 <dependency>
     <groupId>zw.co.paynow</groupId>
     <artifactId>java-sdk</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
@@ -95,9 +95,9 @@ if (response.success()) {
 ```
 
 ## Initiating a mobile based transaction
-A mobile transaction is a transaction made using mobile money e.g. using Ecocash
+A mobile transaction is a transaction made using mobile money e.g. using Ecocash or OneMoney
 
-> Note: Mobile based transactions currently only work for Ecocash with Econet numbers
+> Note: Mobile based transactions currently only work for Ecocash and OneMoney
 
 Create a new payment using the `createPayment(...)` method that requires a unique merchant reference and the email address of the user making the payment.
  

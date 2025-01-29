@@ -1,15 +1,17 @@
 package zw.co.paynow.constants;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class TransactionTypeTest {
+@DisplayName("Transaction Type Test")
+class TransactionTypeTest {
 
     @Test
-    public void ToString_CurrentConstantValuesSet_ToStringHasCorrectValue() {
-        assertEquals("WEB", TransactionType.WEB.toString());
-        assertEquals("MOBILE", TransactionType.MOBILE.toString());
+    @DisplayName("To String Current Constant Values Set To String Has Correct Value")
+    void ToString_CurrentConstantValuesSet_ToStringHasCorrectValue() {
+        assertThat(TransactionType.WEB.toString()).hasToString("WEB");
+        assertThat(TransactionType.MOBILE.toString()).hasToString("MOBILE");
     }
-
 }

@@ -32,6 +32,10 @@ dependencies {
 
 test {
     finalizedBy jacocoTestReport
+    useJUnitPlatform()
+    testLogging {
+        events = ["passed", "failed", "skipped"]
+    }
 }
 
 jacocoTestReport {
