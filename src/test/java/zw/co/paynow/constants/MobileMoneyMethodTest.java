@@ -11,6 +11,7 @@ public class MobileMoneyMethodTest {
         assertEquals("ECOCASH", MobileMoneyMethod.ECOCASH.toString());
         assertEquals("TELECASH", MobileMoneyMethod.TELECASH.toString());
         assertEquals("ONEMONEY", MobileMoneyMethod.ONEMONEY.toString());
+        assertEquals("INNBUCKS", MobileMoneyMethod.INNBUCKS.toString());
     }
 
 }
