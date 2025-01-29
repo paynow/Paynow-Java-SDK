@@ -102,6 +102,19 @@ public class Payment {
     }
 
     /**
+     * Adds a new item to the cart for the transaction
+     *
+     * @param title  The name of the item
+     * @param amount The cost of the item
+     * @return Returns payment object with cart item added
+     */
+    public final Payment add(String title, String amount) {
+        cart.put(title, new BigDecimal(amount));
+
+        return this;
+    }
+
+    /**
      * Removes an item from the cart
      *
      * @param title The name of the item

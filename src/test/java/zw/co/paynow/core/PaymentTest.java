@@ -1,14 +1,13 @@
 package zw.co.paynow.core;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @DisplayName("Payment Test")
 class PaymentTest {
@@ -91,8 +90,20 @@ class PaymentTest {
     }
 
     @Test
+    public void AddUsingStringAndString_ValidParams_CartWithOneNewEntry() {
+
+        int currentCartSize = dummyPayment.getCart().size();
+        dummyPayment.add("Coconuts", "3.2");
+
+        Assertions.assertEquals(currentCartSize + 1, dummyPayment.getCart().size());
+        Assertions.assertTrue(dummyPayment.getCart().containsKey("Coconuts"));
+        Assertions.assertEquals(0, dummyPayment.getCart().get("Coconuts").compareTo(new BigDecimal("3.2")));
+
+    }
+
+    @Test
     @DisplayName("Remove Existing Cart Item As Param Cart With One New Entry")
-    void Remove_ExistingCartItemAsParam_CartWithOneNewEntry() {
+    public void Remove_ExistingCartItemAsParam_CartWithOneNewEntry() {
         int currentCartSize = dummyPayment.getCart().size();
         dummyPayment.remove("Bananas");
 

@@ -37,14 +37,14 @@ public class Paynow {
     private String returnUrl = "http://localhost";
 
     /**
-     * Integration ID shown to the merchant in the “3rd Party Site or Link Profile” area of “Receive Payment Links”
-     * section of “Sell or Receive” on Paynow.
+     * Integration ID shown to the merchant in the "3rd Party Site or Link Profile" area of "Receive Payment Links"
+     * section of "Sell or Receive" on Paynow.
      */
     private String integrationId;
 
     /**
-     * Integration key sent to the merchant via email after requesting it in the “3rd Party Site or Link Profile” area of
-     * “Receive Payment Links” section of “Sell or Receive” on Paynow.
+     * Integration key sent to the merchant via email after requesting it in the "3rd Party Site or Link Profile" area of
+     * "Receive Payment Links" section of "Sell or Receive" on Paynow.
      */
     private String integrationKey;
 

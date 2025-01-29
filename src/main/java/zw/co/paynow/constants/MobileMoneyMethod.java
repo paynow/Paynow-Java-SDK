@@ -8,5 +8,6 @@ package zw.co.paynow.constants;
 public enum MobileMoneyMethod {
     ECOCASH,
     TELECASH,
-    ONEMONEY
+    ONEMONEY,
+    INNBUCKS
 }
