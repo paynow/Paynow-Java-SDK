@@ -12,19 +12,9 @@ plugins {
     id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 }
 
-task sourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar) {
-    archiveClassifier.set('javadoc')
-    from javadoc.destinationDir
-}
-
-artifacts {
-    add('archives', sourcesJar)
-    add('archives', javadocJar)
+java {
+    withJavadocJar() // Automatically adds the Javadoc JAR to the publication
+    withSourcesJar() // Automatically adds the Sources JAR to the publication
 }
 
 repositories {
@@ -53,15 +43,12 @@ jacocoTestReport {
 
 publishing {
     publications {
-        create("maven", MavenPublication) {
+        mavenJava(MavenPublication) {
             groupId = 'zw.co.paynow'
             artifactId = 'java-sdk'
             version = '1.1.2'
 
-            from(components["java"])
-
-            artifact sourcesJar
-            artifact javadocJar
+            from components.java // Automatically includes the main JAR, Sources JAR, and Javadoc JAR
 
             pom {
                 name = 'java-sdk'
@@ -93,18 +80,18 @@ publishing {
             }
         }
     }
-//    repositories {
-//        maven {
-//            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-//            credentials {
-//                username = nexusUsername
-//                password = nexusPassword
-//            }
-//        }
-//    }
+    repositories {
+        maven {
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = nexusUsername
+                password = nexusPassword
+            }
+        }
+    }
 }
 
-// Signature of artifacts
 signing {
-    sign configurations.archives
+    useGpgCmd()
+    sign publishing.publications.mavenJava // Sign the `mavenJava` publication
 }
