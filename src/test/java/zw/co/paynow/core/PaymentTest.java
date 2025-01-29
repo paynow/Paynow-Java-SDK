@@ -1,14 +1,13 @@
 package zw.co.paynow.core;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @DisplayName("Payment Test")
 class PaymentTest {
@@ -96,9 +95,9 @@ class PaymentTest {
         int currentCartSize = dummyPayment.getCart().size();
         dummyPayment.add("Coconuts", "3.2");
 
-        assertEquals(currentCartSize + 1, dummyPayment.getCart().size());
-        assertTrue(dummyPayment.getCart().containsKey("Coconuts"));
-        assertTrue(dummyPayment.getCart().get("Coconuts").compareTo(new BigDecimal("3.2")) == 0);
+        Assertions.assertEquals(currentCartSize + 1, dummyPayment.getCart().size());
+        Assertions.assertTrue(dummyPayment.getCart().containsKey("Coconuts"));
+        Assertions.assertEquals(0, dummyPayment.getCart().get("Coconuts").compareTo(new BigDecimal("3.2")));
 
     }
 

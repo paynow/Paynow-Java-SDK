@@ -3,7 +3,7 @@ package zw.co.paynow.constants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @DisplayName("Mobile Money Method Test")
 class MobileMoneyMethodTest {

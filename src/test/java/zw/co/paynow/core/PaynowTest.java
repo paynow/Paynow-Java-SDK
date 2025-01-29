@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import zw.co.paynow.exceptions.ConnectionException;
 import zw.co.paynow.exceptions.HashMismatchException;
 import zw.co.paynow.http.HttpClient;
