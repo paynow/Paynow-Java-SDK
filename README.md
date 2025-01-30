@@ -19,7 +19,7 @@ repositories {
 	mavenCentral()
 }
 dependencies {
-	implementation 'zw.co.paynow:java-sdk:1.1.1'
+	implementation 'zw.co.paynow:java-sdk:1.1.2'
 }
 ```
 
@@ -28,7 +28,7 @@ dependencies {
 <dependency>
     <groupId>zw.co.paynow</groupId>
     <artifactId>java-sdk</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 </dependency>
 ```
 
