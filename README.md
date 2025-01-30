@@ -11,7 +11,7 @@ In order to make use of this project, the following prerequisites must be met fo
 1. Java JDK 7 or higher
 
 ## Installation
-To use the Java Paynow SDK, you need to add the latest release as a dependency to your project. The latest release will be in the [Maven Central Repository]([https://mvnrepository.com/artifact/zw.co.paynow/java-sdk](https://central.sonatype.com/artifact/zw.co.paynow/java-sdk).
+To use the Java Paynow SDK, you need to add the latest release as a dependency to your project. The latest release will be in the [Maven Central Repository](https://central.sonatype.com/artifact/zw.co.paynow/java-sdk).
 
 #### Gradle
 ```gradle
